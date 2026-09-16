@@ -1238,10 +1238,10 @@ body.question-mode #screen-home > footer.app-footer{
 
   <div id="screen-home">
     <header class="app-header">
-      <img src="/logo.png" alt="S&K SuperMarché" class="logo">
+      <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
     </header>
 
-    <img src="/store_photo.png" alt="Boutique S&K SuperMarché" class="store-photo">
+    <img src="assets/store_photo.png" alt="Boutique S&K SuperMarché" class="store-photo">
 
 <section id="question-1" class="question-screen" style="display:none;">
   <div class="question-card">
@@ -1368,7 +1368,7 @@ body.question-mode #screen-home > footer.app-footer{
       <p>Participez à notre jeu-concours anniversaire</p>
     </div>
 <footer class="app-footer">
-    <img src="/logo.png" alt="S&K SuperMarché" class="logo">
+    <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
     <div class="slogan">Meilleure qualité, Meilleur prix</div>
     <div class="socials">
       <img src="assets/facebook.svg" alt="Facebook">
@@ -1414,7 +1414,7 @@ body.question-mode #screen-home > footer.app-footer{
 
   <div class="overlay" id="popup-welcome">
     <div class="popup-card">
-      <img src="/logo.png" alt="S&K SuperMarché" class="logo">
+      <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
       <h1>Félicitations ! 🎉</h1>
       <p>À l'occasion de notre 17e anniversaire, vous êtes invité(e) à participer à notre jeu-concours et à tenter de remporter un cadeau.</p>
       <p class="free-note">Participation gratuite.</p>
@@ -1436,7 +1436,7 @@ body.question-mode #screen-home > footer.app-footer{
 
   <section id="screen-winner-form" class="screen" style="display:none;">
     <header class="app-header">
-      <img src="/logo.png" alt="S&K SuperMarché" class="logo">
+      <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
     </header>
 
     <h2 class="question-title" style="text-align:center;">Veuillez remplir correctement<br>les informations :</h2>
@@ -1490,7 +1490,7 @@ body.question-mode #screen-home > footer.app-footer{
     <button class="btn btn-primary" id="winner-form-submit">Confirmer</button>
 
     <footer class="app-footer">
-      <img src="/logo.png" alt="S&K SuperMarché" class="logo">
+      <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
       <div class="slogan">Meilleure qualité, Meilleur prix</div>
       <div class="socials">
         <img src="assets/facebook.svg" alt="Facebook">
@@ -1862,7 +1862,7 @@ body.question-mode #screen-home > footer.app-footer{
       doc.rect(0, headerH, pageW, 1.4, 'F');
 
       try{
-        var logo = await loadLogoCropped('/logo.png');
+        var logo = await loadLogoCropped('assets/logo.png');
         var maxLogoW = (splitX - slant) - margin - 4;
         var maxLogoH = headerH - 10;
         var ratio = Math.min(maxLogoW / logo.width, maxLogoH / logo.height);
