@@ -1508,6 +1508,15 @@ body.question-mode #screen-home > footer.app-footer{
     </div>
   </div>
 
+  <div class="overlay" id="popup-lose">
+    <div class="popup-card">
+      <div class="result-icon-circle result-icon-info" id="lose-icon" style="font-size:28px;">ℹ️</div>
+      <h1 id="lose-title">Bonne chance la prochaine fois !</h1>
+      <p id="lose-text">Cette case ne contenait pas le cadeau.</p>
+      <button class="btn btn-primary" id="lose-btn" type="button">D'accord</button>
+    </div>
+  </div>
+
   <section id="screen-winner-form" class="screen" style="display:none;">
     <header class="app-header">
       <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
@@ -1642,6 +1651,38 @@ body.question-mode #screen-home > footer.app-footer{
     });
   }
 
+  function showLosePopup(isFinal){
+    var icon = document.getElementById('lose-icon');
+    var title = document.getElementById('lose-title');
+    var text = document.getElementById('lose-text');
+    var btn = document.getElementById('lose-btn');
+
+    if(isFinal){
+      icon.textContent = '😞';
+      icon.className = 'result-icon-circle result-icon-lose';
+      title.textContent = 'Bonne chance la prochaine fois !';
+      text.textContent = "Vous n'avez plus d'essai disponible pour cette participation.";
+      btn.textContent = 'Terminé';
+      btn.onclick = function(){ location.reload(); };
+    } else {
+      icon.textContent = 'ℹ️';
+      icon.className = 'result-icon-circle result-icon-info';
+      title.textContent = 'Bonne chance la prochaine fois !';
+      text.textContent = "Cette case ne contenait pas le cadeau. Il vous reste " + attemptsLeft + " essai(s).";
+      btn.textContent = "D'accord";
+      btn.onclick = function(){
+        hidePopup('popup-lose');
+        var spinBtn = document.getElementById('spin-btn');
+        if(spinBtn) spinBtn.disabled = false;
+        theWheel.stopAnimation(false);
+        theWheel.rotationAngle = 0;
+        theWheel.draw();
+      };
+    }
+
+    showPopup('popup-lose');
+  }
+
   function onWheelStop(indicatedSegment){
     attemptsLeft--;
     var countEl = document.getElementById('attempts-count');
@@ -1662,13 +1703,9 @@ body.question-mode #screen-home > footer.app-footer{
       if(currentParticipationRef){
         updateDoc(currentParticipationRef, { resultat: 'perdu' }).catch(function(e){ console.error(e); });
       }
-      alert('Bonne chance la prochaine fois ! Aucun essai restant.');
+      showLosePopup(true);
     } else {
-      var spinBtn = document.getElementById('spin-btn');
-      if(spinBtn) spinBtn.disabled = false;
-      theWheel.stopAnimation(false);
-      theWheel.rotationAngle = 0;
-      theWheel.draw();
+      showLosePopup(false);
     }
   }
 
