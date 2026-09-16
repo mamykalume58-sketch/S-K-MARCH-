@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>S&K SuperMarché - 17 ans</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue-main:#1769C2;
+    --blue-secondary:#2F80D0;
+    --white:#FFFFFF;
+    --gold:#F4B942;
+    --text-main:#111827;
+    --bg-light:#F5F7FA;
+    --border:#E5E7EB;
+    --success:#16A34A;
+    --error:#DC2626;
+    --radius-lg:20px;
+    --radius-md:14px;
+    --shadow-soft:0 8px 24px rgba(17,24,39,0.08);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:'Poppins',sans-serif;
+    background:var(--bg-light);
+    color:var(--text-main);
+    display:flex;
+    justify-content:center;
+  }
+  .phone{
+    width:100%;
+    max-width:420px;
+    min-height:100vh;
+    background:var(--white);
+    display:flex;
+    flex-direction:column;
+    overflow-x:hidden;
+    position:relative;
+  }
+  header.app-header{
+    background:var(--white);
+    border-bottom:1px solid var(--border);
+    padding:12px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  header.app-header img.logo{
+    height:40px;
+    object-fit:contain;
+  }
+  header.app-header .icons{
+    display:flex;
+    gap:16px;
+    font-size:20px;
+    color:var(--blue-main);
+  }
+  .store-photo{
+    width:100%;
+    height:160px;
+    object-fit:cover;
+    display:block;
+    background:#E5E7EB;
+  }
+  .btn{
+    display:block;
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:var(--radius-md);
+    font-family:'Poppins',sans-serif;
+    font-weight:600;
+    font-size:16px;
+    cursor:pointer;
+    text-align:center;
+  }
+  .btn-primary{
+    background:var(--blue-main);
+    color:var(--white);
+    box-shadow:var(--shadow-soft);
+  }
+  .btn-primary:active{background:var(--blue-secondary);}
+  .btn-ghost{
+    background:transparent;
+    color:#9CA3AF;
+    font-weight:500;
+  }
+  .overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(17,24,39,0.55);
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    z-index:50;
+  }
+  .overlay.show{
+    display:flex;
+  }
+  .popup-card{
+    background:var(--white);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-soft);
+    padding:28px 22px;
+    text-align:center;
+    max-width:360px;
+    width:100%;
+  }
+  .popup-card img.logo{
+    height:56px;
+    margin-bottom:16px;
+  }
+  .popup-card h1{
+    font-size:22px;
+    font-weight:800;
+    margin-bottom:10px;
+    color:var(--blue-main);
+  }
+  .popup-card p{
+    font-size:14px;
+    color:var(--text-main);
+    line-height:1.5;
+    margin-bottom:8px;
+  }
+  .popup-card .free-note{
+    color:var(--success);
+    font-weight:600;
+    font-size:13px;
+    margin-bottom:20px;
+  }
+  .anniversary-banner{
+    background:linear-gradient(135deg,var(--blue-main),var(--blue-secondary));
+    margin:16px;
+    border-radius:var(--radius-lg);
+    padding:24px 18px;
+    text-align:center;
+    color:var(--white);
+    box-shadow:var(--shadow-soft);
+    position:relative;
+    overflow:hidden;
+  }
+  .anniversary-banner .gift-visual{
+    width:100%;
+    max-height:130px;
+    object-fit:contain;
+    margin-bottom:10px;
+  }
+  .anniversary-banner .gold-number{
+    font-size:44px;
+    font-weight:800;
+    color:var(--gold);
+    line-height:1;
+  }
+  .anniversary-banner .gold-label{
+    font-size:14px;
+    font-weight:600;
+    color:var(--gold);
+    letter-spacing:2px;
+    margin-bottom:6px;
+  }
+  .anniversary-banner h2{
+    margin-top:10px;
+    font-size:16px;
+    font-weight:700;
+  }
+  .anniversary-banner p{
+    font-size:13px;
+    margin-top:6px;
+    opacity:0.9;
+  }
+  .progress-dots{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin:16px 0;
+  }
+  .progress-dots span{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:var(--border);
+  }
+  .progress-dots span.active{
+    background:var(--blue-main);
+    width:22px;
+    border-radius:5px;
+  }
+  footer.app-footer{
+    margin-top:auto;
+    background:var(--blue-main);
+    color:var(--white);
+    padding:28px 20px 20px;
+    text-align:center;
+  }
+  footer.app-footer img.logo{
+    height:36px;
+    margin-bottom:10px;
+    filter:brightness(0) invert(1);
+  }
+  footer.app-footer .slogan{
+    font-size:12px;
+    opacity:0.85;
+    margin-bottom:14px;
+  }
+  footer.app-footer .socials{
+    display:flex;
+    justify-content:center;
+    gap:16px;
+    font-size:18px;
+    margin-bottom:14px;
+  }
+  footer.app-footer .links{
+    font-size:11px;
+    opacity:0.8;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  footer.app-footer .copyright{
+    font-size:10px;
+    opacity:0.6;
+  }
+  .section-label{
+    text-align:center;
+    font-size:11px;
+    color:#9CA3AF;
+    padding:6px;
+    background:#F3F4F6;
+  }
+  .screen{
+    padding:24px 20px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .question-title{
+    font-size:18px;
+    font-weight:700;
+    text-align:center;
+    margin-bottom:8px;
+    color:var(--text-main);
+  }
+  .option-btn{
+    background:var(--blue-main);
+    color:var(--white);
+  }
+  .thanks-note{
+    text-align:center;
+    color:var(--success);
+    font-weight:600;
+    font-size:14px;
+    margin-top:8px;
+  }
+  .loading-screen{
+    padding:60px 24px;
+    text-align:center;
+  }
+  .spinner{
+    width:56px;
+    height:56px;
+    border:5px solid var(--border);
+    border-top:5px solid var(--blue-main);
+    border-radius:50%;
+    margin:0 auto 24px;
+    animation:spin 1s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .loading-screen h2{
+    font-size:18px;
+    font-weight:700;
+    margin-bottom:8px;
+  }
+  .loading-screen p{
+    font-size:13px;
+    color:#6B7280;
+  }
+  .intro-popup p{
+    font-size:14px;
+    margin-bottom:6px;
+  }
+  .attempts-badge{
+    display:inline-block;
+    background:var(--gold);
+    color:var(--text-main);
+    font-weight:700;
+    font-size:13px;
+    padding:4px 14px;
+    border-radius:20px;
+    margin:12px 0;
+  }
+  .game-title{
+    text-align:center;
+    font-size:18px;
+    font-weight:800;
+    margin:20px 0 4px;
+  }
+  .game-subtitle{
+    text-align:center;
+    font-size:13px;
+    color:#6B7280;
+    margin-bottom:16px;
+  }
+  .gift-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    padding:0 16px 20px;
+  }
+  .gift-box{
+    aspect-ratio:1/1;
+    background:linear-gradient(145deg,var(--blue-main),var(--blue-secondary));
+    border-radius:var(--radius-md);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    box-shadow:var(--shadow-soft);
+    border:2px solid var(--gold);
+    cursor:pointer;
+    transition:transform 0.15s ease, opacity 0.15s ease;
+  }
+  .gift-box:active{
+    transform:scale(0.92);
+  }
+  .gift-box.disabled{
+    opacity:0.35;
+    pointer-events:none;
+  }
+  .attempts-remaining{
+    text-align:center;
+    font-size:13px;
+    font-weight:600;
+    padding-bottom:20px;
+  }
+  .attempts-remaining span{
+    color:var(--error);
+    font-weight:800;
+  }
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <div id="screen-home">
+    <div class="section-label">ÉCRAN 1 — Accueil</div>
+    <header class="app-header">
+      <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
+      <div class="icons">
+        <span>☰</span><span>🔔</span>
+      </div>
+    </header>
+
+    <img src="assets/store_photo.png" alt="Boutique S&K SuperMarché" class="store-photo" onerror="this.style.display='none'">
+
+    <div class="anniversary-banner">
+      <img src="assets/gift_banner.png" alt="Cadeau anniversaire" class="gift-visual" onerror="this.style.display='none'">
+      <div class="gold-label">S&K SUPERMARCHÉ</div>
+      <div class="gold-number">17</div>
+      <div class="gold-label">ANS</div>
+      <h2>17 ANS À VOS CÔTÉS</h2>
+      <p>Participez à notre jeu-concours anniversaire</p>
+    </div>
+  </div>
+
+  <section id="screen-q1" class="screen" style="display:none;">
+    <div class="section-label">ÉCRAN 2 — Question 1</div>
+    <h2 class="question-title">Connaissez-vous S&K SuperMarché ?</h2>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q2')">Oui</button>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q2')">Non</button>
+    <div class="progress-dots">
+      <span class="active"></span><span></span><span></span><span></span><span></span>
+    </div>
+  </section>
+
+  <section id="screen-q2" class="screen" style="display:none;">
+    <div class="section-label">ÉCRAN 3 — Question 2</div>
+    <h2 class="question-title">Quel est votre genre ?</h2>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q3')">Femme</button>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q3')">Homme</button>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q3')">Préfère ne pas répondre</button>
+    <div class="progress-dots">
+      <span></span><span class="active"></span><span></span><span></span><span></span>
+    </div>
+  </section>
+
+  <section id="screen-q3" class="screen" style="display:none;">
+    <div class="section-label">ÉCRAN 4 — Question 3</div>
+    <h2 class="question-title">Quel âge avez-vous ?</h2>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q4')">18–21</button>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q4')">22–29</button>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q4')">30–39</button>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q4')">40–49</button>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q4')">50+</button>
+    <div class="progress-dots">
+      <span></span><span></span><span class="active"></span><span></span><span></span>
+    </div>
+  </section>
+
+  <section id="screen-q4" class="screen" style="display:none;">
+    <div class="section-label">ÉCRAN 5 — Question 4</div>
+    <h2 class="question-title">Comment évalueriez-vous S&K SuperMarché ?</h2>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q5')">Excellent ⭐⭐⭐⭐⭐</button>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q5')">Très bien ⭐⭐⭐⭐</button>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q5')">Bien ⭐⭐⭐</button>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q5')">À améliorer ⭐⭐</button>
+    <button class="btn btn-primary option-btn" onclick="goToScreen('screen-q5')">Je ne sais pas</button>
+    <div class="progress-dots">
+      <span></span><span></span><span></span><span class="active"></span><span></span>
+    </div>
+  </section>
+
+  <section id="screen-q5" class="screen" style="display:none;">
+    <div class="section-label">ÉCRAN 6 — Question 5</div>
+    <h2 class="question-title">Nous recommanderiez-vous à vos amis ?</h2>
+    <button class="btn btn-primary option-btn" onclick="submitQuiz()">Oui 👍</button>
+    <button class="btn btn-primary option-btn" onclick="submitQuiz()">Non</button>
+    <button class="btn btn-primary option-btn" onclick="submitQuiz()">Peut-être</button>
+    <p class="thanks-note">Merci pour vos réponses !</p>
+    <div class="progress-dots">
+      <span></span><span></span><span></span><span></span><span class="active"></span>
+    </div>
+  </section>
+
+  <section id="screen-loading" class="loading-screen" style="display:none;">
+    <div class="section-label">ÉCRAN 7 — Traitement</div>
+    <div class="spinner"></div>
+    <h2>Veuillez patienter...</h2>
+    <p>Nous préparons votre participation...</p>
+  </section>
+
+  <section id="screen-grid" class="screen" style="display:none;">
+    <div class="section-label">ÉCRAN 9 — Grille des cadeaux</div>
+    <div class="game-title">🎁 Tentez votre chance !</div>
+    <div class="game-subtitle">Choisissez une case.</div>
+    <div class="gift-grid" id="gift-grid">
+      <div class="gift-box" onclick="tryGift(this)">🎁</div><div class="gift-box" onclick="tryGift(this)">🎁</div><div class="gift-box" onclick="tryGift(this)">🎁</div><div class="gift-box" onclick="tryGift(this)">🎁</div>
+      <div class="gift-box" onclick="tryGift(this)">🎁</div><div class="gift-box" onclick="tryGift(this)">🎁</div><div class="gift-box" onclick="tryGift(this)">🎁</div><div class="gift-box" onclick="tryGift(this)">🎁</div>
+      <div class="gift-box" onclick="tryGift(this)">🎁</div><div class="gift-box" onclick="tryGift(this)">🎁</div><div class="gift-box" onclick="tryGift(this)">🎁</div><div class="gift-box" onclick="tryGift(this)">🎁</div>
+    </div>
+    <div class="attempts-remaining">Essais restants : <span id="attempts-count">3</span></div>
+  </section>
+
+  <footer class="app-footer">
+    <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
+    <div class="slogan">Meilleure qualité, Meilleur prix</div>
+    <div class="socials">📘 📸 🐦 ▶️</div>
+    <div class="links">Accueil · Règlement · Conditions · Confidentialité · Contact</div>
+    <div class="copyright">© 2026 S&K SuperMarché. Tous droits réservés.</div>
+  </footer>
+
+  <div class="overlay show" id="popup-welcome">
+    <div class="popup-card">
+      <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
+      <h1>Félicitations ! 🎉</h1>
+      <p>À l'occasion de notre 17e anniversaire, vous êtes invité(e) à participer à notre jeu-concours et à tenter de remporter un cadeau.</p>
+      <p class="free-note">Participation gratuite.</p>
+      <button class="btn btn-primary" onclick="hidePopup('popup-welcome'); goToScreen('screen-q1')">Continuer ✅</button>
+      <button class="btn btn-ghost" onclick="hidePopup('popup-welcome')">Non</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="popup-intro">
+    <div class="popup-card intro-popup">
+      <h1>Félicitations ! 🎉</h1>
+      <p>Vos réponses ont été enregistrées.</p>
+      <p>C'est le moment de tenter votre chance !</p>
+      <p>Choisissez une case pour découvrir votre cadeau.</p>
+      <div class="attempts-badge">Vous disposez de 3 essais</div>
+      <button class="btn btn-primary" onclick="hidePopup('popup-intro'); goToScreen('screen-grid')">Commencer maintenant</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  var screenIds = ['screen-home','screen-q1','screen-q2','screen-q3','screen-q4','screen-q5','screen-loading','screen-grid'];
+  var attemptsLeft = 3;
+
+  function goToScreen(targetId){
+    screenIds.forEach(function(id){
+      var el = document.getElementById(id);
+      if(el){ el.style.display = 'none'; }
+    });
+    var target = document.getElementById(targetId);
+    if(target){ target.style.display = ''; }
+  }
+
+  function hidePopup(id){
+    document.getElementById(id).classList.remove('show');
+  }
+  function showPopup(id){
+    document.getElementById(id).classList.add('show');
+  }
+
+  function submitQuiz(){
+    goToScreen('screen-loading');
+    setTimeout(function(){
+      showPopup('popup-intro');
+    }, 1800);
+  }
+
+  function tryGift(el){
+    if(el.classList.contains('disabled') || attemptsLeft <= 0) return;
+    attemptsLeft--;
+    document.getElementById('attempts-count').textContent = attemptsLeft;
+    el.classList.add('disabled');
+    if(attemptsLeft <= 0){
+      document.querySelectorAll('.gift-box').forEach(function(b){ b.classList.add('disabled'); });
+      alert('Écran gagné/perdu à venir en Phase 4.');
+    }
+  }
+</script>
+
+</body>
+</html>
