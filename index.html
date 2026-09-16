@@ -51,16 +51,16 @@
   }
   header.app-header{
     flex:0 0 auto;
-    background:var(--white);
-    padding:16px;
+    background:var(--blue-main);
+    padding:20px 16px;
     display:flex;
     align-items:center;
     justify-content:center;
-    border-bottom:1px solid var(--border);
   }
   header.app-header img.logo{
-    height:48px;
+    height:52px;
     object-fit:contain;
+    filter:brightness(0) invert(1);
   }
   #content{
     flex:1 0 auto;
@@ -122,9 +122,23 @@
     font-weight:700; font-size:13px; padding:4px 14px; border-radius:20px; margin:10px 0 16px;
   }
 
+  .hero-photo-wrapper{ position:relative; }
   .store-photo{
     width:100%; height:210px; object-fit:cover; display:block;
   }
+  .hero-photo-overlay{
+    position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(to bottom, rgba(11,42,74,0) 55%, rgba(11,42,74,.55) 100%);
+  }
+  .hero-anniversary-badge{
+    position:absolute; top:14px; left:14px;
+    display:flex; align-items:baseline; gap:4px;
+    background:linear-gradient(135deg,var(--gold),#E8A32D);
+    color:#123E70; padding:6px 12px; border-radius:30px;
+    box-shadow:0 6px 16px rgba(0,0,0,.25);
+  }
+  .hero-badge-number{ font-size:18px; font-weight:800; line-height:1; }
+  .hero-badge-label{ font-size:10px; font-weight:800; letter-spacing:1px; }
   .anniversary-banner{
     background:
       radial-gradient(circle at 12% 15%,rgba(244,185,66,.20),transparent 26%),
@@ -219,6 +233,15 @@
   .share-progress-fill{ height:100%; width:0%; background:var(--success); border-radius:6px; transition:width .4s ease; }
   .share-progress-percent{ font-size:12px; font-weight:800; color:var(--success); min-width:30px; text-align:right; }
 </style>
+  <style id="centering-fix">
+.question-screen{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.game-title-light{ margin-top:auto; }
+.wheel-wrap{ margin-bottom:auto; }
+</style>
 </head>
 <body>
 <div class="phone">
@@ -230,7 +253,14 @@
   <main id="content">
 
     <section class="content-screen active" id="content-home">
-      <img src="assets/store_photo.png" alt="Boutique S&K SuperMarché" class="store-photo">
+      <div class="hero-photo-wrapper">
+        <img src="assets/store_photo.png" alt="Boutique S&K SuperMarché" class="store-photo">
+        <div class="hero-photo-overlay"></div>
+        <div class="hero-anniversary-badge">
+          <span class="hero-badge-number">17</span>
+          <span class="hero-badge-label">ANS</span>
+        </div>
+      </div>
       <div class="anniversary-banner">
         <div class="gold-label">S&K SUPERMARCHÉ</div>
         <div class="ribbon-badge">
@@ -931,7 +961,7 @@
     var shareContinueBtn = document.getElementById('share-continue-btn');
     var shareFill = document.getElementById('share-progress-fill');
     var sharePercentLabel = document.getElementById('share-progress-percent');
-    var shareUrl = 'https://link-center.net/9419832/o6sfedVb8KYK';
+    var shareUrl = 'https://tinyurl.com/sk-supermarche-katanga';
     var shareMessage = 'Je participe au jeu-concours du 17e anniversaire de S&K Supermarché Katanga ! Tentez votre chance vous aussi.';
 
     function registerShare(){
