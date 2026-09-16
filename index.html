@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.4/TweenMax.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/winwheel@2.8.0/Winwheel.min.js"></script>
 <style>
   :root{
     --blue-main:#1769C2;
@@ -1607,108 +1609,75 @@ body.question-mode #screen-home > footer.app-footer{
   var attemptsLeft = 3;
   var currentCadeauNom = 'un cadeau surprise';
   var currentParticipationRef = null;
-  var wheelSectors = [];
-  var wheelRotation = 0;
-  var NUM_SECTORS = 15;
-  var NUM_WINNING = 5;
+  var theWheel = null;
 
-  function buildWheelSectors(){
-    var indices = [];
-    for(var i = 0; i < NUM_SECTORS; i++){ indices.push(i); }
-    for(var i = indices.length - 1; i > 0; i--){
-      var j = Math.floor(Math.random() * (i + 1));
-      var tmp = indices[i]; indices[i] = indices[j]; indices[j] = tmp;
+  function createWheel(){
+    if(typeof Winwheel === 'undefined' || typeof TweenMax === 'undefined'){
+      console.error('Winwheel.js ou TweenMax non chargé (vérifiez la connexion internet).');
+      return;
     }
-    var winningSet = {};
-    for(var i = 0; i < NUM_WINNING; i++){ winningSet[indices[i]] = true; }
-
-    wheelSectors = [];
-    for(var i = 0; i < NUM_SECTORS; i++){
-      wheelSectors.push({
-        isWinning: !!winningSet[i],
-        colorA: '#1769C2',
-        colorB: '#2F80D0'
-      });
-    }
+    theWheel = new Winwheel({
+      'canvasId'    : 'wheel-canvas',
+      'numSegments' : 9,
+      'outerRadius' : 140,
+      'lineWidth'   : 1,
+      'strokeStyle' : '#FFFFFF',
+      'segments'    : [
+        {'fillStyle':'#1769C2','text':'X','textFillStyle':'#FFFFFF','textFontSize':16},
+        {'fillStyle':'#2F80D0','text':'X','textFillStyle':'#FFFFFF','textFontSize':16},
+        {'fillStyle':'#F4B942','text':'15 000 FC','textFillStyle':'#123E70','textFontSize':13},
+        {'fillStyle':'#1769C2','text':'X','textFillStyle':'#FFFFFF','textFontSize':16},
+        {'fillStyle':'#2F80D0','text':'X','textFillStyle':'#FFFFFF','textFontSize':16},
+        {'fillStyle':'#F4B942','text':'25 000 FC','textFillStyle':'#123E70','textFontSize':13},
+        {'fillStyle':'#1769C2','text':'X','textFillStyle':'#FFFFFF','textFontSize':16},
+        {'fillStyle':'#2F80D0','text':'X','textFillStyle':'#FFFFFF','textFontSize':16},
+        {'fillStyle':'#F4B942','text':'35 000 FC','textFillStyle':'#123E70','textFontSize':13}
+      ],
+      'animation' : {
+        'type'             : 'spinToStop',
+        'duration'         : 5,
+        'spins'            : 8,
+        'callbackFinished' : onWheelStop
+      }
+    });
   }
 
-  function drawWheel(){
-    var canvas = document.getElementById('wheel-canvas');
-    if(!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var size = canvas.width;
-    var radius = size / 2;
-    var angleStep = (Math.PI * 2) / NUM_SECTORS;
+  function onWheelStop(indicatedSegment){
+    attemptsLeft--;
+    var countEl = document.getElementById('attempts-count');
+    if(countEl) countEl.textContent = attemptsLeft;
 
-    ctx.clearRect(0, 0, size, size);
+    var isWinning = indicatedSegment.text !== 'X';
 
-    for(var i = 0; i < NUM_SECTORS; i++){
-      var startAngle = i * angleStep - Math.PI / 2;
-      var endAngle = startAngle + angleStep;
-      var sector = wheelSectors[i];
+    if(isWinning){
+      currentCadeauNom = indicatedSegment.text;
+      if(currentParticipationRef){
+        updateDoc(currentParticipationRef, { resultat: 'gagne', cadeauGagne: currentCadeauNom }).catch(function(e){ console.error(e); });
+      }
+      setTimeout(function(){ goToScreen('screen-winner-form'); }, 400);
+      return;
+    }
 
-      ctx.beginPath();
-      ctx.moveTo(radius, radius);
-      ctx.arc(radius, radius, radius, startAngle, endAngle);
-      ctx.closePath();
-      ctx.fillStyle = sector.isWinning ? '#F4B942' : (i % 2 === 0 ? sector.colorA : sector.colorB);
-      ctx.fill();
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      ctx.save();
-      ctx.translate(radius, radius);
-      ctx.rotate(startAngle + angleStep / 2);
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.font = '18px sans-serif';
-      ctx.fillText(sector.isWinning ? '🎁' : '❌', radius * 0.68, 0);
-      ctx.restore();
+    if(attemptsLeft <= 0){
+      if(currentParticipationRef){
+        updateDoc(currentParticipationRef, { resultat: 'perdu' }).catch(function(e){ console.error(e); });
+      }
+      alert('Bonne chance la prochaine fois ! Aucun essai restant.');
+    } else {
+      var spinBtn = document.getElementById('spin-btn');
+      if(spinBtn) spinBtn.disabled = false;
+      theWheel.stopAnimation(false);
+      theWheel.rotationAngle = 0;
+      theWheel.draw();
     }
   }
 
   function spinWheel(){
     if(attemptsLeft <= 0) return;
+    if(!theWheel){ alert('La roue n a pas pu se charger. Vérifiez votre connexion internet et rechargez la page.'); return; }
     var spinBtn = document.getElementById('spin-btn');
     if(spinBtn) spinBtn.disabled = true;
-
-    var targetIndex = Math.floor(Math.random() * NUM_SECTORS);
-    var angleStep = 360 / NUM_SECTORS;
-    var targetAngle = targetIndex * angleStep + angleStep / 2;
-    var extraSpins = 6 * 360;
-    var finalRotation = wheelRotation + extraSpins + (360 - targetAngle) - (wheelRotation % 360);
-
-    wheelRotation = finalRotation;
-    var canvas = document.getElementById('wheel-canvas');
-    if(canvas){
-      canvas.style.transform = 'rotate(' + finalRotation + 'deg)';
-    }
-
-    setTimeout(function(){
-      attemptsLeft--;
-      var countEl = document.getElementById('attempts-count');
-      if(countEl) countEl.textContent = attemptsLeft;
-
-      var sector = wheelSectors[targetIndex];
-
-      if(sector.isWinning){
-        if(currentParticipationRef){
-          updateDoc(currentParticipationRef, { resultat: 'gagne', cadeauGagne: currentCadeauNom }).catch(function(e){ console.error(e); });
-        }
-        setTimeout(function(){ goToScreen('screen-winner-form'); }, 400);
-        return;
-      }
-
-      if(attemptsLeft <= 0){
-        if(currentParticipationRef){
-          updateDoc(currentParticipationRef, { resultat: 'perdu', cadeauGagne: currentCadeauNom }).catch(function(e){ console.error(e); });
-        }
-        alert('Bonne chance la prochaine fois ! Aucun essai restant.');
-      } else {
-        if(spinBtn) spinBtn.disabled = false;
-      }
-    }, 4600);
+    theWheel.startAnimation();
   }
 
   function goToScreen(targetId){
@@ -1775,8 +1744,7 @@ body.question-mode #screen-home > footer.app-footer{
 
 
   document.addEventListener('DOMContentLoaded', function(){
-    buildWheelSectors();
-    drawWheel();
+    createWheel();
     var spinBtnEl = document.getElementById('spin-btn');
     if(spinBtnEl){
       spinBtnEl.addEventListener('click', spinWheel);
