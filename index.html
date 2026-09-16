@@ -1232,6 +1232,75 @@ body.question-mode #screen-home > footer.app-footer{
 }
 </style>
 
+
+<style id="game-dark-theme">
+.game-dark-screen{
+  min-height:100dvh;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(244,185,66,.12), transparent 30%),
+    radial-gradient(circle at 85% 85%, rgba(244,185,66,.10), transparent 30%),
+    linear-gradient(160deg,#0B3D91 0%,#123E70 45%,#08213F 100%);
+  display:flex;
+  flex-direction:column;
+  color:#fff;
+  padding-bottom:24px;
+}
+.game-dark-screen .app-header{
+  background:transparent;
+  padding:18px 16px;
+}
+.game-dark-screen .app-header img.logo{
+  filter:brightness(0) invert(1);
+  height:44px;
+}
+.game-dark-card{
+  background:#fff;
+  color:#172033;
+  border-radius:24px;
+  margin:12px 18px;
+  padding:34px 22px;
+  text-align:center;
+  box-shadow:0 18px 40px rgba(0,0,0,.25);
+}
+.game-dark-screen .spinner{
+  width:56px;height:56px;
+  border:5px solid #E5E7EB;
+  border-top-color:#1769C2;
+  border-radius:50%;
+  margin:0 auto 20px;
+  animation:spin 1s linear infinite;
+}
+.game-dark-screen h2{
+  font-size:20px;font-weight:800;color:#0B3D91;margin-bottom:8px;
+}
+.game-dark-screen .game-dark-card p{
+  color:#6B7280;font-size:13px;
+}
+.game-title-light{
+  text-align:center;color:#fff;font-size:19px;font-weight:800;
+  margin:6px 0 4px;
+}
+.game-subtitle-light{
+  text-align:center;color:rgba(255,255,255,.8);font-size:12.5px;
+  margin-bottom:6px;padding:0 24px;
+}
+.attempts-remaining-light{
+  text-align:center;color:#fff;font-size:13px;font-weight:600;
+  margin-top:6px;
+}
+.attempts-remaining-light span{
+  color:var(--gold);font-weight:800;
+}
+.result-icon-circle{
+  width:64px;height:64px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:30px;margin:0 auto 16px;
+}
+.result-icon-lose{ background:#FEE2E2; }
+.result-icon-info{ background:#DBEAFE; }
+.result-icon-win{ background:#DCFCE7; }
+</style>
+
 </head>
 <body>
 <div class="phone">
@@ -1390,24 +1459,26 @@ body.question-mode #screen-home > footer.app-footer{
 
   
 
-  <section id="screen-loading" class="loading-screen" style="display:none;">
-    <div class="section-label">ÉCRAN 7 — Traitement</div>
-    <div class="spinner"></div>
-    <h2>Veuillez patienter...</h2>
-    <p>Nous préparons votre participation...</p>
+  <section id="screen-loading" class="game-dark-screen" style="display:none;">
+    <header class="app-header"><img src="assets/logo.png" alt="S&K SuperMarché" class="logo"></header>
+    <div class="game-dark-card" style="margin-top:auto;margin-bottom:auto;">
+      <div class="spinner"></div>
+      <h2>Veuillez patienter...</h2>
+      <p>Nous préparons votre participation...</p>
+    </div>
   </section>
 
-  <section id="screen-grid" class="screen" style="display:none;">
-    <div class="section-label">ÉCRAN 9 — Roue de la chance</div>
-    <div class="game-title">🎡 Tentez votre chance !</div>
-    <div class="game-subtitle">Tournez la roue et gagnez des produits S&amp;K !</div>
+  <section id="screen-grid" class="game-dark-screen" style="display:none;">
+    <header class="app-header"><img src="assets/logo.png" alt="S&K SuperMarché" class="logo"></header>
+    <div class="game-title-light">🎡 Tentez votre chance !</div>
+    <div class="game-subtitle-light">Tournez la roue et gagnez des produits S&amp;K !</div>
     <div class="wheel-wrap">
       <div class="wheel-container">
         <div class="wheel-pointer"></div>
         <canvas id="wheel-canvas" class="wheel-svg" width="300" height="300"></canvas>
       </div>
       <button class="btn btn-primary" id="spin-btn" type="button">Tourner la roue</button>
-      <div class="attempts-remaining">Essais restants : <span id="attempts-count">3</span></div>
+      <div class="attempts-remaining-light">Essais restants : <span id="attempts-count">3</span></div>
     </div>
   </section>
 
@@ -1425,10 +1496,11 @@ body.question-mode #screen-home > footer.app-footer{
 
   <div class="overlay" id="popup-intro">
     <div class="popup-card intro-popup">
+      <img src="assets/logo.png" alt="S&K SuperMarché" class="logo" style="height:44px;">
       <h1>Félicitations ! 🎉</h1>
       <p>Vos réponses ont été enregistrées.</p>
       <p>C'est le moment de tenter votre chance !</p>
-      <p>Choisissez une case pour découvrir votre cadeau.</p>
+      <p>Faites tourner la roue et gagnez des produits S&amp;K.</p>
       <div class="attempts-badge">Vous disposez de 3 essais</div>
       <button class="btn btn-primary" onclick="hidePopup('popup-intro'); goToScreen('screen-grid')">Commencer maintenant</button>
     </div>
