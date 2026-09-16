@@ -1796,6 +1796,11 @@ body.question-mode #screen-home > footer.app-footer{
 
   document.addEventListener('DOMContentLoaded', function(){
     createWheel();
+    var wonNextBtn = document.getElementById('won-next-btn');
+    if(wonNextBtn){
+      wonNextBtn.addEventListener('click', function(){ goToScreen('screen-winner-form'); });
+    }
+
     var spinBtnEl = document.getElementById('spin-btn');
     if(spinBtnEl){
       spinBtnEl.addEventListener('click', spinWheel);
