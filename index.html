@@ -4,9 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>S&K SuperMarché - 17 ans</title>
+<meta property="og:type" content="website">
 <meta property="og:title" content="Jeu-concours S&K SuperMarché - 17 ans">
 <meta property="og:description" content="Tentez votre chance et gagnez un cadeau pour nos 17 ans !">
-<meta property="og:image" content="https://mamykalume58-sketch.github.io/S-K-MARCH-/assets/logo.png">
+<meta property="og:image" content="https://mamykalume58-sketch.github.io/S-K-MARCH-/assets/store_photo.png">
+<meta property="og:image:width" content="1672">
+<meta property="og:image:height" content="941">
 <meta property="og:url" content="https://mamykalume58-sketch.github.io/S-K-MARCH-/">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9588402449584183" crossorigin="anonymous"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -100,6 +103,7 @@
   .overlay{
     display:none; position:fixed; inset:0; background:rgba(17,24,39,0.55);
     align-items:center; justify-content:center; padding:24px; z-index:50;
+    overflow-y:auto;
   }
   .overlay.show{ display:flex; }
   .popup-card{
@@ -162,7 +166,7 @@
   .app-card{
     width:100%; background:#FFFFFF; border:1px solid rgba(23,105,194,.08);
     border-radius:22px; padding:24px 20px; box-shadow:0 14px 32px rgba(17,24,39,.06);
-    text-align:center; margin:auto 18px;
+    text-align:center; max-width:360px;
   }
   .app-card h2{ font-size:19px; font-weight:800; color:var(--blue-dark); line-height:1.3; margin-bottom:8px; }
   .app-card .card-desc{ font-size:12.5px; color:var(--text-muted); line-height:1.6; margin-bottom:18px; }
@@ -175,8 +179,8 @@
   }
   .answer-btn:active, .rating-btn:active{ transform:scale(.98); }
   .question-dots{ display:flex; justify-content:center; align-items:center; gap:6px; margin-top:18px; }
-  .question-dots span{ width:7px; height:7px; border-radius:50%; background:#E5E7EB; display:block; }
-  .question-dots span.active{ width:18px; border-radius:5px; background:var(--blue-main); }
+  .question-dots span{ width:20px; height:20px; border-radius:50%; background:#E5E7EB; display:block; }
+  .question-dots span.active{ background:var(--blue-main); }
 
   .spinner{
     width:48px; height:48px; border:5px solid var(--border); border-top:5px solid var(--blue-main);
@@ -184,7 +188,7 @@
   }
   @keyframes spin{ to{ transform:rotate(360deg); } }
 
-  .wheel-container{ position:relative; width:230px; height:230px; margin:4px auto 18px; }
+  .wheel-container{ position:relative; width:270px; height:270px; margin:4px auto 14px; }
   .wheel-pointer{
     position:absolute; top:-10px; left:50%; transform:translateX(-50%);
     width:0; height:0; border-left:13px solid transparent; border-right:13px solid transparent;
@@ -233,15 +237,6 @@
   .share-progress-fill{ height:100%; width:0%; background:var(--success); border-radius:6px; transition:width .4s ease; }
   .share-progress-percent{ font-size:12px; font-weight:800; color:var(--success); min-width:30px; text-align:right; }
 </style>
-  <style id="centering-fix">
-.question-screen{
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-}
-.game-title-light{ margin-top:auto; }
-.wheel-wrap{ margin-bottom:auto; }
-</style>
 </head>
 <body>
 <div class="phone">
@@ -272,134 +267,6 @@
       </div>
     </section>
 
-    <section class="content-screen" id="content-q1">
-      <div class="app-card">
-        <h2>Connaissez-vous S&amp;K SuperMarché ?</h2>
-        <p class="card-desc">Votre réponse nous aide à mieux vous connaître.</p>
-        <div class="question-options">
-          <button class="answer-btn" type="button" data-value="OUI">OUI</button>
-          <button class="answer-btn" type="button" data-value="NON">NON</button>
-        </div>
-        <div class="question-dots"><span class="active"></span><span></span><span></span><span></span><span></span></div>
-      </div>
-    </section>
-
-    <section class="content-screen" id="content-q2">
-      <div class="app-card">
-        <h2>Quel est votre genre ?</h2>
-        <div class="question-options">
-          <button class="answer-btn" type="button" data-value="FEMME">FEMME</button>
-          <button class="answer-btn" type="button" data-value="HOMME">HOMME</button>
-        </div>
-        <div class="question-dots"><span class="active"></span><span class="active"></span><span></span><span></span><span></span></div>
-      </div>
-    </section>
-
-    <section class="content-screen" id="content-q3">
-      <div class="app-card">
-        <h2>Quel âge avez-vous ?</h2>
-        <div class="question-options">
-          <button class="answer-btn" type="button" data-value="18-21 ANS">18 – 21 ANS</button>
-          <button class="answer-btn" type="button" data-value="22-29 ANS">22 – 29 ANS</button>
-        </div>
-        <div class="question-dots"><span class="active"></span><span class="active"></span><span class="active"></span><span></span><span></span></div>
-      </div>
-    </section>
-
-    <section class="content-screen" id="content-q4">
-      <div class="app-card">
-        <h2>Comment évaluez-vous S&amp;K SuperMarché ?</h2>
-        <div class="rating-options">
-          <button class="rating-btn" type="button" data-value="Excellent">★★★★★ Excellent</button>
-          <button class="rating-btn" type="button" data-value="Tres bien">★★★★ Très bien</button>
-          <button class="rating-btn" type="button" data-value="Bien">★★★ Bien</button>
-          <button class="rating-btn" type="button" data-value="Moyen">★★ Moyen</button>
-          <button class="rating-btn" type="button" data-value="Pas bien">★ Pas bien</button>
-        </div>
-        <div class="question-dots"><span class="active"></span><span class="active"></span><span class="active"></span><span class="active"></span><span></span></div>
-      </div>
-    </section>
-
-    <section class="content-screen" id="content-q5">
-      <div class="app-card">
-        <h2>Recommanderiez-vous S&amp;K SuperMarché à vos proches ?</h2>
-        <div class="question-options">
-          <button class="answer-btn" type="button" data-value="OUI">OUI</button>
-          <button class="answer-btn" type="button" data-value="NON">NON</button>
-        </div>
-        <div class="question-dots"><span class="active"></span><span class="active"></span><span class="active"></span><span class="active"></span><span class="active"></span></div>
-      </div>
-    </section>
-
-    <section class="content-screen" id="content-loading">
-      <div class="app-card">
-        <div class="spinner"></div>
-        <h2>Veuillez patienter...</h2>
-        <p class="card-desc" style="margin-bottom:0;">Nous préparons votre participation...</p>
-      </div>
-    </section>
-
-    <section class="content-screen" id="content-wheel">
-      <div class="app-card">
-        <h2 style="margin-bottom:2px;">Tentez votre chance !</h2>
-        <p class="card-desc">Tournez la roue et gagnez des produits S&amp;K !</p>
-        <div class="wheel-container">
-          <div class="wheel-pointer"></div>
-          <canvas id="wheel-canvas" class="wheel-svg" width="300" height="300"></canvas>
-        </div>
-        <button class="btn btn-primary" id="spin-btn" type="button">Tourner la roue</button>
-        <div class="attempts-remaining">Essais restants : <span id="attempts-count">3</span></div>
-      </div>
-    </section>
-
-    <section class="content-screen" id="content-won">
-      <div class="app-card">
-        <h2>Félicitations !</h2>
-        <p class="card-desc" style="margin-bottom:18px;">Vous avez gagné :</p>
-
-        <div style="position:relative;max-width:260px;margin:0 auto 22px;background:linear-gradient(135deg,#FFD874,var(--gold));border-radius:16px;border:2px dashed rgba(11,61,145,.35);padding:22px 16px;overflow:visible;">
-          <div style="position:absolute;left:-11px;top:50%;transform:translateY(-50%);width:22px;height:22px;background:#FFFFFF;border-radius:50%;"></div>
-          <div style="position:absolute;right:-11px;top:50%;transform:translateY(-50%);width:22px;height:22px;background:#FFFFFF;border-radius:50%;"></div>
-          <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:#123E70;margin-bottom:8px;">🎟️ COUPON CADEAU</div>
-          <div style="font-size:20px;font-weight:800;color:#0B3D91;line-height:1.3;" id="won-prize-label">-</div>
-        </div>
-
-        <p class="card-desc" style="font-size:12px;margin-bottom:20px;">Suivez les instructions de la page suivante pour réclamer votre prix.</p>
-        <button class="btn btn-primary" id="won-next-btn" type="button">Suivant</button>
-      </div>
-    </section>
-
-    <section class="content-screen" id="content-winner-form">
-      <div class="app-card" style="text-align:left;">
-        <h2 style="text-align:center;">Veuillez remplir correctement<br>les informations :</h2>
-        <div style="margin-top:10px;">
-          <div class="winner-field">
-            <div class="winner-field-icon">•</div>
-            <div class="winner-field-content"><label>Nom complet</label><input type="text" id="winner-fullname" placeholder="Ex : Jean Dupont"></div>
-          </div>
-          <div class="winner-field">
-            <div class="winner-field-icon">•</div>
-            <div class="winner-field-content"><label>Numéro de téléphone</label><input type="tel" id="winner-phone" placeholder="Ex : +243 81 234 56 78"></div>
-          </div>
-          <div class="winner-field">
-            <div class="winner-field-icon">•</div>
-            <div class="winner-field-content"><label>Adresse</label><input type="text" id="winner-address" placeholder="Ex : 123, Avenue de la Paix"></div>
-          </div>
-          <div class="winner-field">
-            <div class="winner-field-icon">•</div>
-            <div class="winner-field-content"><label>Ville</label><input type="text" id="winner-city" placeholder="Ex : Lubumbashi"></div>
-          </div>
-          <div class="winner-field">
-            <div class="winner-field-icon">•</div>
-            <div class="winner-field-content"><label>E-mail</label><input type="email" id="winner-email" placeholder="Ex : jean@email.com"></div>
-          </div>
-          <div class="privacy-note"><span>i</span><span>Vos informations sont utilisées uniquement pour le traitement de votre participation et/ou la remise du cadeau.</span></div>
-          <p id="winner-form-error" style="color:var(--error);font-size:12px;display:none;text-align:center;margin-bottom:10px;">Merci de remplir tous les champs.</p>
-          <button class="btn btn-primary" id="winner-form-submit" type="button">Confirmer</button>
-        </div>
-      </div>
-    </section>
-
   </main>
 
   <footer class="app-footer">
@@ -424,6 +291,73 @@
     </div>
   </div>
 
+  <div class="overlay" id="popup-q1">
+    <div class="app-card">
+      <h2>Connaissez-vous S&amp;K SuperMarché ?</h2>
+      <p class="card-desc">Votre réponse nous aide à mieux vous connaître.</p>
+      <div class="question-options">
+        <button class="answer-btn" type="button" data-value="OUI">OUI</button>
+        <button class="answer-btn" type="button" data-value="NON">NON</button>
+      </div>
+      <div class="question-dots"><span class="active"></span><span></span><span></span><span></span><span></span></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="popup-q2">
+    <div class="app-card">
+      <h2>Quel est votre genre ?</h2>
+      <div class="question-options">
+        <button class="answer-btn" type="button" data-value="FEMME">FEMME</button>
+        <button class="answer-btn" type="button" data-value="HOMME">HOMME</button>
+      </div>
+      <div class="question-dots"><span class="active"></span><span class="active"></span><span></span><span></span><span></span></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="popup-q3">
+    <div class="app-card">
+      <h2>Quel âge avez-vous ?</h2>
+      <div class="question-options">
+        <button class="answer-btn" type="button" data-value="18-21 ANS">18 – 21 ANS</button>
+        <button class="answer-btn" type="button" data-value="22-29 ANS">22 – 29 ANS</button>
+      </div>
+      <div class="question-dots"><span class="active"></span><span class="active"></span><span class="active"></span><span></span><span></span></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="popup-q4">
+    <div class="app-card">
+      <h2>Comment évaluez-vous S&amp;K SuperMarché ?</h2>
+      <div class="rating-options">
+        <button class="rating-btn" type="button" data-value="Excellent">★★★★★ Excellent</button>
+        <button class="rating-btn" type="button" data-value="Tres bien">★★★★ Très bien</button>
+        <button class="rating-btn" type="button" data-value="Bien">★★★ Bien</button>
+        <button class="rating-btn" type="button" data-value="Moyen">★★ Moyen</button>
+        <button class="rating-btn" type="button" data-value="Pas bien">★ Pas bien</button>
+      </div>
+      <div class="question-dots"><span class="active"></span><span class="active"></span><span class="active"></span><span class="active"></span><span></span></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="popup-q5">
+    <div class="app-card">
+      <h2>Recommanderiez-vous S&amp;K SuperMarché à vos proches ?</h2>
+      <div class="question-options">
+        <button class="answer-btn" type="button" data-value="OUI">OUI</button>
+        <button class="answer-btn" type="button" data-value="NON">NON</button>
+      </div>
+      <div class="question-dots"><span class="active"></span><span class="active"></span><span class="active"></span><span class="active"></span><span class="active"></span></div>
+    </div>
+  </div>
+
+  <div class="overlay" id="popup-loading">
+    <div class="app-card">
+      <div class="spinner"></div>
+      <h2>Veuillez patienter...</h2>
+      <p class="card-desc" style="margin-bottom:0;">Nous préparons votre participation...</p>
+    </div>
+  </div>
+
   <div class="overlay" id="popup-intro">
     <div class="popup-card">
       <img src="assets/logo.png" alt="S&K SuperMarché" class="logo" style="height:40px;">
@@ -436,12 +370,73 @@
     </div>
   </div>
 
+  <div class="overlay" id="popup-wheel">
+    <div class="app-card">
+      <h2 style="margin-bottom:2px;">Tentez votre chance !</h2>
+      <p class="card-desc">Tournez la roue et gagnez des produits S&amp;K !</p>
+      <div class="wheel-container">
+        <div class="wheel-pointer"></div>
+        <canvas id="wheel-canvas" class="wheel-svg" width="300" height="300"></canvas>
+      </div>
+      <button class="btn btn-primary" id="spin-btn" type="button">Tourner la roue</button>
+      <div class="attempts-remaining">Essais restants : <span id="attempts-count">3</span></div>
+    </div>
+  </div>
+
   <div class="overlay" id="popup-lose">
     <div class="popup-card">
       <div class="result-icon-circle result-icon-info" id="lose-icon">i</div>
       <h1 id="lose-title">Bonne chance la prochaine fois !</h1>
       <p id="lose-text">Cette case ne contenait pas le cadeau.</p>
       <button class="btn btn-primary" id="lose-btn" type="button">D'accord</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="popup-won">
+    <div class="app-card">
+      <h2>Félicitations !</h2>
+      <p class="card-desc" style="margin-bottom:18px;">Vous avez gagné :</p>
+
+      <div style="position:relative;max-width:260px;margin:0 auto 22px;background:linear-gradient(135deg,#FFD874,var(--gold));border-radius:16px;border:2px dashed rgba(11,61,145,.35);padding:22px 16px;overflow:visible;">
+        <div style="position:absolute;left:-11px;top:50%;transform:translateY(-50%);width:22px;height:22px;background:#FFFFFF;border-radius:50%;"></div>
+        <div style="position:absolute;right:-11px;top:50%;transform:translateY(-50%);width:22px;height:22px;background:#FFFFFF;border-radius:50%;"></div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:#123E70;margin-bottom:8px;">🎟️ COUPON CADEAU</div>
+        <div style="font-size:20px;font-weight:800;color:#0B3D91;line-height:1.3;" id="won-prize-label">-</div>
+      </div>
+
+      <p class="card-desc" style="font-size:12px;margin-bottom:20px;">Suivez les instructions de la page suivante pour réclamer votre prix.</p>
+      <button class="btn btn-primary" id="won-next-btn" type="button">Suivant</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="popup-winner-form">
+    <div class="app-card" style="text-align:left;">
+      <h2 style="text-align:center;">Veuillez remplir correctement<br>les informations :</h2>
+      <div style="margin-top:10px;">
+        <div class="winner-field">
+          <div class="winner-field-icon">•</div>
+          <div class="winner-field-content"><label>Nom complet</label><input type="text" id="winner-fullname" placeholder="Ex : Jean Dupont"></div>
+        </div>
+        <div class="winner-field">
+          <div class="winner-field-icon">•</div>
+          <div class="winner-field-content"><label>Numéro de téléphone</label><input type="tel" id="winner-phone" placeholder="Ex : +243 81 234 56 78"></div>
+        </div>
+        <div class="winner-field">
+          <div class="winner-field-icon">•</div>
+          <div class="winner-field-content"><label>Adresse</label><input type="text" id="winner-address" placeholder="Ex : 123, Avenue de la Paix"></div>
+        </div>
+        <div class="winner-field">
+          <div class="winner-field-icon">•</div>
+          <div class="winner-field-content"><label>Ville</label><input type="text" id="winner-city" placeholder="Ex : Lubumbashi"></div>
+        </div>
+        <div class="winner-field">
+          <div class="winner-field-icon">•</div>
+          <div class="winner-field-content"><label>E-mail</label><input type="email" id="winner-email" placeholder="Ex : jean@email.com"></div>
+        </div>
+        <div class="privacy-note"><span>i</span><span>Vos informations sont utilisées uniquement pour le traitement de votre participation et/ou la remise du cadeau.</span></div>
+        <p id="winner-form-error" style="color:var(--error);font-size:12px;display:none;text-align:center;margin-bottom:10px;">Merci de remplir tous les champs.</p>
+        <button class="btn btn-primary" id="winner-form-submit" type="button">Confirmer</button>
+      </div>
     </div>
   </div>
 
@@ -517,17 +512,9 @@
   var theWheel = null;
   window.answers = {};
 
-  function showContent(id){
-    document.querySelectorAll('#content .content-screen').forEach(function(el){ el.classList.remove('active'); });
-    var target = document.getElementById(id);
-    if(target) target.classList.add('active');
-  }
   function hidePopup(id){ document.getElementById(id).classList.remove('show'); }
   function showPopup(id){ document.getElementById(id).classList.add('show'); }
-  function goHomeThenPopup(popupId){
-    showContent('content-home');
-    showPopup(popupId);
-  }
+  function switchPopup(fromId, toId){ hidePopup(fromId); showPopup(toId); }
 
   function wireQuestion(currentId, nextId, key, isLast){
     var section = document.getElementById(currentId);
@@ -536,19 +523,19 @@
       btn.addEventListener('click', function(){
         window.answers[key] = btn.getAttribute('data-value') || btn.textContent.trim();
         if(isLast){
-          submitQuiz();
+          submitQuiz(currentId);
         } else {
-          showContent(nextId);
+          switchPopup(currentId, nextId);
         }
       });
     });
   }
 
-  function submitQuiz(){
-    showContent('content-loading');
+  function submitQuiz(fromId){
+    switchPopup(fromId, 'popup-loading');
     saveParticipation();
     setTimeout(function(){
-      goHomeThenPopup('popup-intro');
+      switchPopup('popup-loading', 'popup-intro');
     }, 1800);
   }
 
@@ -637,8 +624,7 @@
       text.textContent = "Cette case ne contenait pas le cadeau. Il vous reste " + attemptsLeft + " essai(s).";
       btn.textContent = "D'accord";
       btn.onclick = function(){
-        hidePopup('popup-lose');
-        showContent('content-wheel');
+        switchPopup('popup-lose', 'popup-wheel');
         var spinBtn = document.getElementById('spin-btn');
         if(spinBtn) spinBtn.disabled = false;
         theWheel.stopAnimation(false);
@@ -646,7 +632,8 @@
         theWheel.draw();
       };
     }
-    goHomeThenPopup('popup-lose');
+    hidePopup('popup-wheel');
+    showPopup('popup-lose');
   }
 
   function onWheelStop(indicatedSegment){
@@ -663,7 +650,7 @@
       }
       var wonLabel = document.getElementById('won-prize-label');
       if(wonLabel) wonLabel.textContent = currentCadeauNom;
-      setTimeout(function(){ showContent('content-won'); }, 400);
+      setTimeout(function(){ switchPopup('popup-wheel', 'popup-won'); }, 400);
       return;
     }
 
@@ -934,27 +921,25 @@
   document.addEventListener('DOMContentLoaded', function(){
     initWheel();
 
-    setTimeout(function(){ goHomeThenPopup('popup-welcome'); }, 3000);
+    setTimeout(function(){ showPopup('popup-welcome'); }, 3000);
 
     document.getElementById('welcome-continue-btn').addEventListener('click', function(){
-      hidePopup('popup-welcome');
-      showContent('content-q1');
+      switchPopup('popup-welcome', 'popup-q1');
     });
 
-    wireQuestion('content-q1', 'content-q2', 'connaitSK', false);
-    wireQuestion('content-q2', 'content-q3', 'genre', false);
-    wireQuestion('content-q3', 'content-q4', 'age', false);
-    wireQuestion('content-q4', 'content-q5', 'evaluation', false);
-    wireQuestion('content-q5', null, 'recommande', true);
+    wireQuestion('popup-q1', 'popup-q2', 'connaitSK', false);
+    wireQuestion('popup-q2', 'popup-q3', 'genre', false);
+    wireQuestion('popup-q3', 'popup-q4', 'age', false);
+    wireQuestion('popup-q4', 'popup-q5', 'evaluation', false);
+    wireQuestion('popup-q5', null, 'recommande', true);
 
     document.getElementById('intro-start-btn').addEventListener('click', function(){
-      hidePopup('popup-intro');
-      showContent('content-wheel');
+      switchPopup('popup-intro', 'popup-wheel');
     });
 
     document.getElementById('spin-btn').addEventListener('click', spinWheel);
     document.getElementById('won-next-btn').addEventListener('click', function(){
-      showContent('content-winner-form');
+      switchPopup('popup-won', 'popup-winner-form');
     });
 
     var shareCount = 0;
@@ -979,15 +964,15 @@
 
     document.getElementById('share-whatsapp-btn').addEventListener('click', function(){
       window.open('https://wa.me/?text=' + encodeURIComponent(shareMessage + ' ' + shareUrl), '_blank');
-      registerShare();
+      setTimeout(registerShare, 3000);
     });
     document.getElementById('share-facebook-btn').addEventListener('click', function(){
       window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl), '_blank');
-      registerShare();
+      setTimeout(registerShare, 3000);
     });
     document.getElementById('share-messenger-btn').addEventListener('click', function(){
       window.open('https://www.facebook.com/dialog/send?link=' + encodeURIComponent(shareUrl) + '&app_id=0&redirect_uri=' + encodeURIComponent(shareUrl), '_blank');
-      registerShare();
+      setTimeout(registerShare, 3000);
     });
     document.getElementById('share-copy-btn').addEventListener('click', function(){
       var btn = this;
@@ -999,11 +984,9 @@
       } else {
         alert('Lien : ' + shareUrl);
       }
-      registerShare();
     });
     shareContinueBtn.addEventListener('click', function(){
-      hidePopup('popup-share');
-      showPopup('popup-winner-confirm');
+      switchPopup('popup-share', 'popup-winner-confirm');
     });
 
     document.getElementById('download-receipt-btn').addEventListener('click', async function(){
@@ -1045,7 +1028,7 @@
 
       document.getElementById('winner-participation-id').textContent = participationId;
       window.winnerReceiptData = { fullName: fullName, phone: phone, address: address, city: city, email: email, cadeau: currentCadeauNom, participationId: participationId };
-      goHomeThenPopup('popup-share');
+      switchPopup('popup-winner-form', 'popup-share');
     });
   });
 </script>
