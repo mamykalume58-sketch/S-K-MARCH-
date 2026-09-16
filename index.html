@@ -7,15 +7,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js" onerror="alert('Erreur: TweenMax n a pas pu se charger (verifiez la connexion internet).')"></script>
-<script src="https://cdn.jsdelivr.net/gh/zarocknz/javascript-winwheel@229a47acc3d7fd941d72a3ba9e1649751fd10ed5/Winwheel.min.js" onerror="alert('Erreur: Winwheel.js n a pas pu se charger (verifiez la connexion internet).')"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/zarocknz/javascript-winwheel@229a47acc3d7fd941d72a3ba9e1649751fd10ed5/Winwheel.min.js"></script>
 <style>
   :root{
     --blue-main:#1769C2;
     --blue-secondary:#2F80D0;
+    --blue-dark:#0B3D91;
     --white:#FFFFFF;
     --gold:#F4B942;
     --text-main:#111827;
+    --text-muted:#6B7280;
     --bg-light:#F5F7FA;
     --border:#E5E7EB;
     --success:#16A34A;
@@ -42,1538 +44,328 @@
     overflow-x:hidden;
     position:relative;
   }
-  #screen-home{
-  display:flex;
-  flex-direction:column;
-  flex:none;
-}
   header.app-header{
+    flex:0 0 auto;
     background:var(--white);
-    padding:18px 16px;
+    padding:16px;
     display:flex;
     align-items:center;
     justify-content:center;
+    border-bottom:1px solid var(--border);
   }
   header.app-header img.logo{
-    height:55px;
+    height:48px;
     object-fit:contain;
   }
-  .store-photo{
-  width:100vw;
-  max-width:none;
-  height:230px;
-  object-fit:cover;
-  display:block;
-  margin:0 0 0 calc(50% - 50vw);
-  border-radius:0;
-}
-  .btn{
-    display:block;
-    width:100%;
-    padding:16px;
-    border:none;
-    border-radius:var(--radius-md);
-    font-family:'Poppins',sans-serif;
-    font-weight:600;
-    font-size:16px;
-    cursor:pointer;
-    text-align:center;
+  #content{
+    flex:1 0 auto;
+    display:flex;
+    flex-direction:column;
   }
-  .btn-primary{
+  .content-screen{ display:none; flex-direction:column; flex:1 0 auto; }
+  .content-screen.active{ display:flex; }
+
+  footer.app-footer{
+    flex:0 0 auto;
     background:var(--blue-main);
     color:var(--white);
-    box-shadow:var(--shadow-soft);
-  }
-  .btn-primary:active{background:var(--blue-secondary);}
-  .btn-ghost{
-    background:transparent;
-    color:#9CA3AF;
-    font-weight:500;
-  }
-  .overlay{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(17,24,39,0.55);
-    align-items:center;
-    justify-content:center;
-    padding:24px;
-    z-index:50;
-  }
-  .overlay.show{
-    display:flex;
-  }
-  .popup-card{
-    background:var(--white);
-    border-radius:var(--radius-lg);
-    box-shadow:var(--shadow-soft);
-    padding:28px 22px;
+    padding:24px 20px 18px;
     text-align:center;
-    max-width:360px;
-    width:100%;
   }
-  .popup-card img.logo{
-    height:56px;
-    margin-bottom:16px;
-  }
-  .popup-card h1{
-    font-size:22px;
-    font-weight:800;
+  footer.app-footer img.logo{
+    height:40px;
     margin-bottom:10px;
-    color:var(--blue-main);
+    filter:brightness(0) invert(1);
   }
-  .popup-card p{
-    font-size:14px;
-    color:var(--text-main);
-    line-height:1.5;
-    margin-bottom:8px;
+  footer.app-footer .slogan{ font-size:12px; opacity:0.85; margin-bottom:14px; }
+  footer.app-footer .socials{ display:flex; align-items:center; justify-content:center; gap:18px; margin-bottom:14px; }
+  footer.app-footer .socials img{ width:26px; height:26px; object-fit:contain; }
+  footer.app-footer .links{ font-size:11px; opacity:0.8; display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-bottom:10px; }
+  footer.app-footer .copyright{ font-size:10px; opacity:0.6; }
+
+  .btn{
+    display:block; width:100%; padding:14px; border:none;
+    border-radius:var(--radius-md); font-family:'Poppins',sans-serif;
+    font-weight:600; font-size:15px; cursor:pointer; text-align:center;
   }
-  .popup-card .free-note{
-    color:var(--success);
-    font-weight:600;
-    font-size:13px;
-    margin-bottom:20px;
+  .btn-primary{ background:var(--blue-main); color:var(--white); box-shadow:var(--shadow-soft); }
+  .btn-primary:active{ background:var(--blue-secondary); }
+  .btn-secondary{ background:#9CA3AF; color:#fff; }
+
+  .overlay{
+    display:none; position:fixed; inset:0; background:rgba(17,24,39,0.55);
+    align-items:center; justify-content:center; padding:24px; z-index:50;
+  }
+  .overlay.show{ display:flex; }
+  .popup-card{
+    background:var(--white); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft);
+    padding:26px 22px; text-align:center; max-width:360px; width:100%;
+  }
+  .popup-card img.logo{ height:52px; margin-bottom:14px; }
+  .popup-card h1{ font-size:21px; font-weight:800; margin-bottom:8px; color:var(--blue-main); }
+  .popup-card p{ font-size:14px; color:var(--text-main); line-height:1.5; margin-bottom:6px; }
+  .popup-card .free-note{ color:var(--success); font-weight:600; font-size:13px; margin-bottom:16px; }
+  .result-icon-circle{
+    width:56px; height:56px; border-radius:50%; display:flex;
+    align-items:center; justify-content:center; font-size:26px; margin:0 auto 14px;
+  }
+  .result-icon-lose{ background:#FEE2E2; }
+  .result-icon-info{ background:#DBEAFE; }
+  .result-icon-win{ background:#DCFCE7; }
+  .attempts-badge{
+    display:inline-block; background:var(--gold); color:var(--text-main);
+    font-weight:700; font-size:13px; padding:4px 14px; border-radius:20px; margin:10px 0 16px;
+  }
+
+  .store-photo{
+    width:100%; height:210px; object-fit:cover; display:block;
   }
   .anniversary-banner{
-    margin-top:auto;
     background:
       radial-gradient(circle at 12% 15%,rgba(244,185,66,.20),transparent 26%),
       radial-gradient(circle at 88% 82%,rgba(255,255,255,.10),transparent 30%),
       linear-gradient(145deg,#1769C2 0%,#1457A0 52%,#0B2A4A 100%);
-    margin:18px 16px 4px;
-    border-radius:24px;
-    padding:24px 18px 22px;
-    text-align:center;
-    color:var(--white);
-    box-shadow:0 14px 32px rgba(17,24,39,.16);
-    position:relative;
-    overflow:hidden;
-    border:1px solid rgba(255,255,255,.12);
+    margin:16px; border-radius:22px; padding:22px 18px 20px; text-align:center;
+    color:var(--white); box-shadow:0 14px 32px rgba(17,24,39,.16);
+    position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.12);
+    margin-top:auto;
   }
-
-  .anniversary-banner::before{
-    content:"";
-    position:absolute;
-    width:180px;
-    height:auto;
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:50%;
-    top:-105px;
-    left:-75px;
-  }
-
-  .anniversary-banner::after{
-    content:"";
-    position:absolute;
-    width:145px;
-    height:145px;
-    border:1px solid rgba(244,185,66,.20);
-    border-radius:50%;
-    right:-65px;
-    bottom:-70px;
-  }
-
-  .anniversary-banner .gold-label{
-    font-size:12px;
-    font-weight:700;
-    color:var(--gold);
-    letter-spacing:2.5px;
-    opacity:1;
-    position:relative;
-    z-index:1;
-  }
-
-  .ribbon-badge{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    margin:12px auto 8px;
-    position:relative;
-    z-index:1;
-  }
-
-  .ribbon-badge .gold-number{
-    font-size:58px;
-    font-weight:800;
-    color:var(--gold);
-    line-height:.95;
-    text-shadow:0 5px 14px rgba(0,0,0,.28);
-    letter-spacing:-2px;
-  }
-
+  .anniversary-banner .gold-label{ font-size:12px; font-weight:700; color:var(--gold); letter-spacing:2.5px; position:relative; z-index:1; }
+  .ribbon-badge{ display:flex; flex-direction:column; align-items:center; margin:10px auto 6px; position:relative; z-index:1; }
+  .ribbon-badge .gold-number{ font-size:52px; font-weight:800; color:var(--gold); line-height:.95; letter-spacing:-2px; }
   .ribbon-badge .ribbon-label{
-    margin-top:5px;
-    background:var(--gold);
-    color:#123E70;
-    font-size:10px;
-    font-weight:800;
-    letter-spacing:2px;
-    padding:5px 18px;
-    border-radius:4px;
-    box-shadow:0 4px 10px rgba(0,0,0,.16);
+    margin-top:5px; background:var(--gold); color:#123E70; font-size:10px; font-weight:800;
+    letter-spacing:2px; padding:5px 18px; border-radius:4px;
   }
+  .anniversary-banner h2{ margin-top:8px; font-size:17px; font-weight:800; position:relative; z-index:1; }
+  .anniversary-banner p{ font-size:12px; margin-top:6px; opacity:.9; position:relative; z-index:1; }
 
-  .anniversary-banner .gift-visual{
-    width:100%;
-    height:150px;
-    object-fit:contain;
-    margin:10px 0 8px;
-    position:relative;
-    z-index:1;
-    filter:drop-shadow(0 10px 12px rgba(0,0,0,.18));
+  .app-card{
+    width:100%; background:#FFFFFF; border:1px solid rgba(23,105,194,.08);
+    border-radius:22px; padding:24px 20px; box-shadow:0 14px 32px rgba(17,24,39,.06);
+    text-align:center; margin:auto 18px;
   }
+  .app-card h2{ font-size:19px; font-weight:800; color:var(--blue-dark); line-height:1.3; margin-bottom:8px; }
+  .app-card .card-desc{ font-size:12.5px; color:var(--text-muted); line-height:1.6; margin-bottom:18px; }
 
-  .anniversary-banner h2{
-    margin-top:10px;
-    font-size:18px;
-    font-weight:800;
-    letter-spacing:.2px;
-    position:relative;
-    z-index:1;
+  .question-options, .rating-options{ display:flex; flex-direction:column; gap:10px; }
+  .answer-btn, .rating-btn{
+    width:100%; min-height:48px; border:0; background:var(--blue-main); color:#fff;
+    border-radius:12px; padding:12px; font-family:'Poppins',sans-serif;
+    font-size:14px; font-weight:700; text-align:center; cursor:pointer;
   }
+  .answer-btn:active, .rating-btn:active{ transform:scale(.98); }
+  .question-dots{ display:flex; justify-content:center; align-items:center; gap:6px; margin-top:18px; }
+  .question-dots span{ width:7px; height:7px; border-radius:50%; background:#E5E7EB; display:block; }
+  .question-dots span.active{ width:18px; border-radius:5px; background:var(--blue-main); }
 
-  .anniversary-banner p{
-    font-size:12px;
-    margin-top:7px;
-    opacity:.9;
-    line-height:1.5;
-    position:relative;
-    z-index:1;
-  }
-  /* ===== DESIGN PREMIUM — ÉCRAN 2 ===== */
-
-  .question-screen{
-    min-height:calc(100vh - 70px);
-    background:
-      radial-gradient(circle at 50% 0%, rgba(23,105,194,.10), transparent 35%),
-      #F7F9FC;
-    padding:28px 18px 24px;
-    gap:0;
-  }
-
-  .question-top{
-    width:100%;
-    display:flex;
-    justify-content:flex-end;
-    margin-bottom:22px;
-  }
-
-  .step-indicator{
-    font-size:10px;
-    font-weight:700;
-    letter-spacing:1.4px;
-    color:#8A94A6;
-  }
-
-  .step-indicator span{
-    color:var(--blue-main);
-    font-weight:800;
-  }
-
-  .question-card{
-    width:100%;
-    background:#FFFFFF;
-    border:1px solid rgba(23,105,194,.08);
-    border-radius:26px;
-    padding:30px 22px 24px;
-    box-shadow:
-      0 18px 45px rgba(17,24,39,.08),
-      0 3px 10px rgba(17,24,39,.03);
-    text-align:center;
-  }
-
-  .question-icon{
-    width:48px;
-    height:48px;
-    margin:0 auto 18px;
-    border-radius:16px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:rgba(23,105,194,.09);
-    color:var(--blue-main);
-    font-size:22px;
-    font-weight:800;
-  }
-
-  .question-kicker{
-    color:var(--blue-main);
-    font-size:10px;
-    font-weight:800;
-    letter-spacing:2px;
-    margin-bottom:12px;
-  }
-
-  .question-screen .question-title{
-    font-size:24px;
-    line-height:1.25;
-    font-weight:500;
-    color:#172033;
-    margin:0 0 12px;
-  }
-
-  .question-screen .question-title strong{
-    color:var(--blue-main);
-    font-weight:800;
-  }
-
-  .question-description{
-    max-width:290px;
-    margin:0 auto 26px;
-    color:#718096;
-    font-size:12px;
-    line-height:1.7;
-  }
-
-  .question-options{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-  }
-
-  .answer-btn{
-    width:100%;
-    min-height:58px;
-    border:1px solid #E3E8EF;
-    background:#FFFFFF;
-    border-radius:16px;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:9px 13px;
-    color:#172033;
-    font-family:'Poppins',sans-serif;
-    font-size:14px;
-    font-weight:600;
-    text-align:left;
-    cursor:pointer;
-    transition:
-      transform .18s ease,
-      border-color .18s ease,
-      box-shadow .18s ease,
-      background .18s ease;
-  }
-
-  .answer-btn:hover{
-    border-color:rgba(23,105,194,.45);
-    background:#F8FBFF;
-    box-shadow:0 8px 20px rgba(23,105,194,.10);
-    transform:translateY(-1px);
-  }
-
-  .answer-btn:active{
-    transform:scale(.98);
-  }
-
-  .answer-icon{
-    width:38px;
-    height:38px;
-    flex:0 0 38px;
-    border-radius:12px;
-    background:rgba(23,105,194,.10);
-    color:var(--blue-main);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:17px;
-    font-weight:800;
-  }
-
-  .answer-arrow{
-    margin-left:auto;
-    color:#AAB3C2;
-    font-size:19px;
-    transition:transform .18s ease;
-  }
-
-  .answer-btn:hover .answer-arrow{
-    transform:translateX(3px);
-    color:var(--blue-main);
-  }
-
-  .question-screen .progress-dots{
-    margin:28px 0 10px;
-    gap:7px;
-  }
-
-  .question-screen .progress-dots span{
-    width:7px;
-    height:7px;
-    background:#D9E0E9;
-    transition:.2s ease;
-  }
-
-  .question-screen .progress-dots span.active{
-    width:25px;
-    height:7px;
-    background:var(--blue-main);
-    border-radius:5px;
-  }
-
-  .secure-note{
-    text-align:center;
-    color:#9AA4B2;
-    font-size:10px;
-    line-height:1.5;
-    margin-top:4px;
-  }
-
-  @media(max-width:360px){
-    .question-card{
-      padding:25px 17px 20px;
-    }
-
-    .question-screen .question-title{
-      font-size:21px;
-    }
-  }
-
-  .progress-dots{
-    display:flex;
-    justify-content:center;
-    gap:8px;
-    margin:16px 0;
-  }
-  .progress-dots span{
-    width:9px;
-    height:9px;
-    border-radius:50%;
-    background:var(--border);
-  }
-  .progress-dots span.active{
-    background:var(--blue-main);
-    width:22px;
-    border-radius:5px;
-  }
-  footer.app-footer{
-  margin-top:0;
-  background:var(--white);
-  color:#0B3D91;
-  padding:28px 20px 20px;
-  text-align:center;
-  border-top:1px solid #E5E7EB;
-  flex:none;
-}
-  footer.app-footer img.logo{
-    height:55px;
-    margin-bottom:10px;
-  }
-  footer.app-footer .slogan{
-    font-size:12px;
-    opacity:0.85;
-    margin-bottom:14px;
-  }
-  footer.app-footer .socials{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:18px;
-    margin-bottom:14px;
-  }
-  footer.app-footer .socials img{
-    width:28px;
-    height:28px;
-    object-fit:contain;
-    display:block;
-  }
-  footer.app-footer .links{
-    font-size:11px;
-    opacity:0.8;
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:10px;
-    margin-bottom:12px;
-  }
-  footer.app-footer .copyright{
-    font-size:10px;
-    opacity:0.6;
-  }
-  .section-label{
-    text-align:center;
-    font-size:11px;
-    color:#9CA3AF;
-    padding:6px;
-    background:#F3F4F6;
-  }
-  .screen{
-    padding:24px 20px;
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-  }
-  .question-title{
-    font-size:18px;
-    font-weight:700;
-    text-align:center;
-    margin-bottom:8px;
-    color:var(--text-main);
-  }
-  .option-btn{
-    background:var(--blue-main);
-    color:var(--white);
-  }
-  .thanks-note{
-    text-align:center;
-    color:var(--success);
-    font-weight:600;
-    font-size:14px;
-    margin-top:8px;
-  }
-  .loading-screen{
-    padding:60px 24px;
-    text-align:center;
-  }
   .spinner{
-    width:56px;
-    height:56px;
-    border:5px solid var(--border);
-    border-top:5px solid var(--blue-main);
-    border-radius:50%;
-    margin:0 auto 24px;
-    animation:spin 1s linear infinite;
+    width:48px; height:48px; border:5px solid var(--border); border-top:5px solid var(--blue-main);
+    border-radius:50%; margin:0 auto 18px; animation:spin 1s linear infinite;
   }
   @keyframes spin{ to{ transform:rotate(360deg); } }
-  .loading-screen h2{
-    font-size:18px;
-    font-weight:700;
-    margin-bottom:8px;
-  }
-  .loading-screen p{
-    font-size:13px;
-    color:#6B7280;
-  }
-  .intro-popup p{
-    font-size:14px;
-    margin-bottom:6px;
-  }
-  .attempts-badge{
-    display:inline-block;
-    background:var(--gold);
-    color:var(--text-main);
-    font-weight:700;
-    font-size:13px;
-    padding:4px 14px;
-    border-radius:20px;
-    margin:12px 0;
-  }
-  .game-title{
-    text-align:center;
-    font-size:18px;
-    font-weight:800;
-    margin:20px 0 4px;
-  }
-  .game-subtitle{
-    text-align:center;
-    font-size:13px;
-    color:#6B7280;
-    margin-bottom:16px;
-  }
-  .gift-grid{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:10px;
-    padding:0 16px 20px;
-  }
-  .gift-box{
-    aspect-ratio:1/1;
-    background:linear-gradient(145deg,var(--blue-main),var(--blue-secondary));
-    border-radius:var(--radius-md);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:28px;
-    box-shadow:var(--shadow-soft);
-    border:2px solid var(--gold);
-    cursor:pointer;
-    transition:transform 0.15s ease, opacity 0.15s ease;
-  }
-  .gift-box:active{
-    transform:scale(0.92);
-  }
-  .gift-box.disabled{
-    opacity:0.35;
-    pointer-events:none;
-  }
 
-  .wheel-wrap{
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding:10px 16px 24px;
-  }
-  .wheel-container{
-    position:relative;
-    width:280px;
-    height:280px;
-    margin-bottom:20px;
-  }
+  .wheel-container{ position:relative; width:230px; height:230px; margin:4px auto 18px; }
   .wheel-pointer{
-    position:absolute;
-    top:-12px;
-    left:50%;
-    transform:translateX(-50%);
-    width:0;
-    height:0;
-    border-left:15px solid transparent;
-    border-right:15px solid transparent;
-    border-top:24px solid var(--gold);
-    z-index:5;
-    filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));
+    position:absolute; top:-10px; left:50%; transform:translateX(-50%);
+    width:0; height:0; border-left:13px solid transparent; border-right:13px solid transparent;
+    border-top:20px solid var(--gold); z-index:5;
   }
   .wheel-svg{
-    display:block;
-    border-radius:50%;
-    box-shadow:0 12px 30px rgba(17,24,39,.25);
-    border:6px solid var(--gold);
-    transition:transform 4.5s cubic-bezier(0.17,0.67,0.12,0.99);
+    display:block; width:100%; height:100%; border-radius:50%; box-shadow:0 10px 24px rgba(17,24,39,.20);
+    border:5px solid var(--gold); transition:transform 4.5s cubic-bezier(0.17,0.67,0.12,0.99);
   }
-  #spin-btn:disabled{
-    opacity:0.5;
-    pointer-events:none;
-  }
-  .attempts-remaining{
-    text-align:center;
-    font-size:13px;
-    font-weight:600;
-    padding-bottom:20px;
-  }
-  .attempts-remaining span{
-    color:var(--error);
-    font-weight:800;
-  }
+  #spin-btn:disabled{ opacity:0.5; pointer-events:none; }
+  .attempts-remaining{ text-align:center; font-size:13px; font-weight:600; color:var(--text-muted); margin-top:6px; }
+  .attempts-remaining span{ color:var(--error); font-weight:800; }
 
   .winner-field{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    border:1px solid #E5E7EB;
-    border-radius:14px;
-    padding:12px 14px;
-    margin-bottom:12px;
+    display:flex; align-items:center; gap:12px; border:1px solid var(--border);
+    border-radius:14px; padding:11px 14px; margin-bottom:10px; background:#fff;
   }
-  .winner-field-icon{
-    font-size:18px;
-    color:var(--blue-main);
-    flex:0 0 22px;
-    text-align:center;
-  }
-  .winner-field-content{
-    flex:1;
-  }
-  .winner-field-content label{
-    display:block;
-    font-size:13px;
-    font-weight:700;
-    color:var(--text-main);
-    margin-bottom:2px;
-  }
+  .winner-field-icon{ font-size:17px; color:var(--blue-main); flex:0 0 20px; text-align:center; }
+  .winner-field-content{ flex:1; }
+  .winner-field-content label{ display:block; font-size:12px; font-weight:700; margin-bottom:2px; }
   .winner-field-content input{
-    width:100%;
-    border:none;
-    outline:none;
-    font-family:'Poppins',sans-serif;
-    font-size:12px;
-    color:#9CA3AF;
-    padding:0;
+    width:100%; border:none; outline:none; font-family:'Poppins',sans-serif;
+    font-size:12px; color:var(--text-main); padding:0;
   }
-  .winner-field-content input:focus{
-    color:var(--text-main);
-  }
+  .winner-field-content input::placeholder{ color:#9CA3AF; }
   .privacy-note{
-    display:flex;
-    align-items:flex-start;
-    gap:8px;
-    font-size:11px;
-    color:#6B7280;
-    line-height:1.5;
-    margin:14px 0 18px;
-  }
-  .privacy-note .privacy-icon{
-    color:var(--blue-main);
-    flex:0 0 14px;
-    margin-top:1px;
+    display:flex; align-items:flex-start; gap:8px; font-size:11px;
+    color:var(--text-muted); line-height:1.5; margin:10px 0 16px;
   }
 
-  .share-progress-bar{
-    width:100%;
-    height:10px;
-    background:#E5E7EB;
-    border-radius:6px;
-    overflow:hidden;
-    margin:16px 0 8px;
+  .share-options{ display:flex; flex-direction:column; gap:10px; margin:14px 0 12px; }
+  .share-option-btn{
+    display:flex; align-items:center; gap:12px; width:100%; padding:12px 16px;
+    border:none; border-radius:14px; font-family:'Poppins',sans-serif;
+    font-weight:600; font-size:14px; color:#fff; cursor:pointer;
   }
-  .share-progress-fill{
-    height:100%;
-    width:0%;
-    background:var(--success);
-    border-radius:6px;
-    transition:width .4s ease;
-  }
-  .share-progress-label{
-    text-align:center;
-    font-size:12px;
-    color:#6B7280;
-    margin-bottom:16px;
-  }
-  .btn-whatsapp{
-    background:#25D366;
-    color:#fff;
-  }
-
+  .share-option-btn:active{ transform:scale(.98); }
+  .share-option-icon{ width:22px; flex:0 0 22px; font-size:18px; text-align:center; }
+  .share-option-icon-img{ width:22px; height:22px; flex:0 0 22px; object-fit:contain; }
+  .share-whatsapp-opt{ background:#25D366; }
+  .share-facebook-opt{ background:#1877F2; }
+  .share-messenger-opt{ background:#0084FF; }
+  .share-copy-opt{ background:#374151; }
+  .share-progress-row{ display:flex; align-items:center; gap:10px; }
+  .share-progress-bar{ flex:1; height:9px; background:#E5E7EB; border-radius:6px; overflow:hidden; }
+  .share-progress-fill{ height:100%; width:0%; background:var(--success); border-radius:6px; transition:width .4s ease; }
+  .share-progress-percent{ font-size:12px; font-weight:800; color:var(--success); min-width:30px; text-align:right; }
 </style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<style id="question-dots-style">
-.question-dots{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:7px;
-  margin:0 auto 14px;
-}
-
-.question-dots span{
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:#E5E7EB;
-  display:block;
-  transition:background .25s ease, transform .25s ease;
-}
-
-.question-dots span.active{
-  background:#1769C2;
-  transform:scale(1.05);
-}
-</style>
-
-
-<style id="question-dots-bottom">
-.question-dots{
-  display:flex !important;
-  justify-content:center !important;
-  align-items:center !important;
-  gap:7px !important;
-  margin:14px auto 0 !important;
-}
-
-.question-dots span{
-  width:22px !important;
-  height:22px !important;
-  border-radius:50% !important;
-  background:#E5E7EB !important;
-  display:block !important;
-}
-
-.question-dots span.active{
-  background:#1769C2 !important;
-}
-</style>
-
-
-<style id="question-2-style">
-.question-title{
-  color:#0B3D91;
-  font-size:20px;
-  font-weight:800;
-  line-height:1.3;
-  margin-bottom:18px;
-  text-align:center;
-}
-.question-dots-2{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:7px;
-  margin:14px auto 0;
-}
-.question-dots-2 span{
-  width:22px;
-  height:22px;
-  border-radius:50%;
-  background:#E5E7EB;
-  display:block;
-}
-.question-dots-2 span.active{
-  background:#1769C2;
-}
-</style>
-
-
-<style id="question-3-style">
-.question-dots-3{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:7px;
-  margin:14px auto 0;
-}
-
-.question-dots-3 span{
-  width:22px;
-  height:22px;
-  border-radius:50%;
-  background:#E5E7EB;
-  display:block;
-}
-
-.question-dots-3 span.active{
-  background:#1769C2;
-}
-</style>
-
-
-<style id="question-4-style">
-.rating-options{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  width:100%;
-}
-
-.rating-btn{
-  width:100%;
-  border:1px solid #E5E7EB;
-  border-radius:12px;
-  background:#fff;
-  color:#1769C2;
-  padding:10px 12px;
-  font-size:17px;
-  font-weight:700;
-  text-align:left;
-  cursor:pointer;
-}
-
-.rating-btn span{
-  color:#374151;
-  font-size:12px;
-  font-weight:600;
-  margin-left:10px;
-}
-
-.rating-btn:active{
-  transform:scale(.98);
-}
-
-.question-dots-4{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:7px;
-  margin:14px auto 0;
-}
-
-.question-dots-4 span{
-  width:22px;
-  height:22px;
-  border-radius:50%;
-  background:#E5E7EB;
-  display:block;
-}
-
-.question-dots-4 span.active{
-  background:#1769C2;
-}
-</style>
-
-
-<style id="question-4-same-buttons">
-#question-4 .rating-options{
-  display:flex !important;
-  flex-direction:column !important;
-  gap:10px !important;
-  width:100% !important;
-}
-
-#question-4 .rating-btn{
-  width:100% !important;
-  box-sizing:border-box !important;
-  border:0 !important;
-  border-radius:12px !important;
-  padding:13px !important;
-  background:#1769C2 !important;
-  color:#fff !important;
-  font-weight:700 !important;
-  font-size:14px !important;
-  text-align:center !important;
-  cursor:pointer !important;
-}
-
-#question-4 .rating-btn span{
-  color:#fff !important;
-  font-size:14px !important;
-  font-weight:700 !important;
-  margin-left:8px !important;
-}
-
-#question-4 .rating-btn:active{
-  transform:scale(.98);
-}
-</style>
-
-
-<style id="question-5-style">
-.question-dots-5{
-  display:flex !important;
-  justify-content:center !important;
-  align-items:center !important;
-  gap:7px !important;
-  margin:14px auto 0 !important;
-}
-
-.question-dots-5 span{
-  width:22px !important;
-  height:22px !important;
-  border-radius:50% !important;
-  background:#1769C2 !important;
-  display:block !important;
-}
-</style>
-
-
-<style id="single-footer-question">
-body.question-mode footer.app-footer{
-  display:block !important;
-  margin-top:16px !important;
-  flex:none !important;
-}
-</style>
-
-
-<style id="q135-button-fix">
-#question-1 .answer-btn,
-#question-3 .answer-btn,
-#question-5 .answer-btn{
-  background:#1769C2 !important;
-  color:#fff !important;
-  border:0 !important;
-  border-radius:12px !important;
-  padding:13px !important;
-  font-size:14px !important;
-  font-weight:700 !important;
-  cursor:pointer !important;
-}
-
-#question-1 .answer-btn:active,
-#question-3 .answer-btn:active,
-#question-5 .answer-btn:active{
-  transform:scale(.98);
-}
-</style>
-
-
-<style id="q2-button-fix">
-#question-2 .answer-btn{
-  background:#1769C2 !important;
-  color:#fff !important;
-  border:0 !important;
-  border-radius:12px !important;
-  padding:13px !important;
-  font-size:14px !important;
-  font-weight:700 !important;
-  cursor:pointer !important;
-}
-#question-2 .answer-btn:active{
-  transform:scale(.98);
-}
-</style>
-
-
-<style id="footer-blue-only">
-footer.app-footer{
-  background:#1769C2 !important;
-  color:#FFFFFF !important;
-}
-footer.app-footer .slogan,
-footer.app-footer .links,
-footer.app-footer .copyright{
-  color:#FFFFFF !important;
-}
-</style>
-
-
-<style id="home-footer-position">
-body:not(.question-mode) .phone{
-  min-height:100dvh !important;
-  display:flex !important;
-  flex-direction:column !important;
-}
-
-body:not(.question-mode) #screen-home{
-  flex:1 !important;
-  display:flex !important;
-  flex-direction:column !important;
-}
-
-body:not(.question-mode) #screen-home .anniversary-banner{
-  margin-bottom:20px !important;
-}
-
-body:not(.question-mode) footer.app-footer{
-  margin-top:auto !important;
-  margin-bottom:0 !important;
-  flex:none !important;
-}
-</style>
-
-
-<style id="footer-logo-white-final">
-footer.app-footer img.logo{
-  filter:brightness(0) invert(1) !important;
-}
-</style>
-
-
-<style id="question-footer-gap-fix">
-body.question-mode .question-screen{
-  margin-bottom:0 !important;
-  padding-bottom:0 !important;
-}
-
-body.question-mode .question-card{
-  margin-bottom:0 !important;
-}
-
-body.question-mode footer.app-footer{
-  margin-top:0 !important;
-}
-</style>
-
-
-<style id="footer-directly-after-questions">
-#screen-home .question-screen{
-  margin-bottom:0 !important;
-}
-
-#screen-home .question-screen .question-card{
-  margin-bottom:0 !important;
-}
-
-#screen-home > footer.app-footer{
-  margin-top:0 !important;
-  margin-bottom:0 !important;
-  flex:none !important;
-}
-
-body.question-mode #screen-home > footer.app-footer{
-  display:block !important;
-  margin-top:0 !important;
-}
-</style>
-
-
-<style id="questionnaire-footer-tight">
-body.question-mode #screen-home{
-  gap:0 !important;
-}
-
-body.question-mode #screen-home > .question-screen{
-  margin-top:0 !important;
-  margin-bottom:0 !important;
-  padding-top:0 !important;
-  padding-bottom:0 !important;
-}
-
-body.question-mode #screen-home > .question-screen .question-card{
-  margin-bottom:0 !important;
-}
-
-body.question-mode #screen-home > footer.app-footer{
-  margin-top:0 !important;
-  margin-bottom:0 !important;
-  padding-top:16px !important;
-}
-</style>
-
-
-
-<style id="stock-screen-final">
-#screen-loading.loading-screen{
-  box-sizing:border-box !important;
-  width:100% !important;
-  min-height:240px !important;
-  margin:0 !important;
-  padding:45px 20px !important;
-  background:#fff !important;
-  text-align:center !important;
-}
-
-#screen-loading .section-label{
-  display:none !important;
-}
-
-#screen-loading .spinner{
-  width:54px !important;
-  height:54px !important;
-  margin:0 auto 20px !important;
-  border:5px solid #E5E7EB !important;
-  border-top-color:#1769C2 !important;
-  border-radius:50% !important;
-  animation:stockSpin .8s linear infinite !important;
-}
-
-#screen-loading h2{
-  margin:0 0 8px !important;
-  color:#0B3D91 !important;
-  font-size:22px !important;
-  font-weight:800 !important;
-}
-
-#screen-loading p{
-  margin:0 !important;
-  color:#6B7280 !important;
-  font-size:14px !important;
-}
-
-@keyframes stockSpin{
-  to{transform:rotate(360deg);}
-}
-</style>
-
-
-<style id="stock-loading-animation-final">
-#screen-loading.loading-screen{
-  min-height:300px !important;
-  flex-direction:column !important;
-  align-items:center !important;
-  justify-content:center !important;
-  text-align:center !important;
-  background:#fff !important;
-}
-
-#screen-loading .spinner{
-  width:64px !important;
-  height:64px !important;
-  border:6px solid #E5E7EB !important;
-  border-top-color:#1769C2 !important;
-  border-right-color:#0B3D91 !important;
-  border-radius:50% !important;
-  animation:stockLoadingSpin .7s linear infinite !important;
-}
-
-#screen-loading h2{
-  margin:20px 0 8px !important;
-  color:#0B3D91 !important;
-  font-size:23px !important;
-  font-weight:800 !important;
-}
-
-#screen-loading p{
-  margin:0 !important;
-  color:#6B7280 !important;
-  font-size:14px !important;
-}
-
-@keyframes stockLoadingSpin{
-  to{transform:rotate(360deg);}
-}
-</style>
-
-
-<style id="stock-screen-correct-position">
-#screen-loading.loading-screen{
-  box-sizing:border-box !important;
-  width:100% !important;
-  margin:0 !important;
-  padding:45px 20px !important;
-  background:#fff !important;
-  text-align:center !important;
-}
-
-#screen-loading .section-label{
-  display:none !important;
-}
-
-#screen-loading .spinner{
-  width:56px !important;
-  height:56px !important;
-  border:5px solid #E5E7EB !important;
-  border-top-color:#1769C2 !important;
-  border-radius:50% !important;
-  margin:0 auto 20px !important;
-  animation:stockCorrectSpin 1s linear infinite !important;
-}
-
-#screen-loading h2{
-  margin:0 0 8px !important;
-  color:#0B3D91 !important;
-  font-size:22px !important;
-  font-weight:800 !important;
-}
-
-#screen-loading p{
-  margin:0 !important;
-  color:#6B7280 !important;
-  font-size:14px !important;
-}
-
-@keyframes stockCorrectSpin{
-  to{transform:rotate(360deg);}
-}
-</style>
-
-
-<style id="game-dark-theme">
-.game-dark-screen{
-  min-height:100dvh;
-  background:
-    radial-gradient(circle at 15% 10%, rgba(244,185,66,.12), transparent 30%),
-    radial-gradient(circle at 85% 85%, rgba(244,185,66,.10), transparent 30%),
-    linear-gradient(160deg,#0B3D91 0%,#123E70 45%,#08213F 100%);
-  display:flex;
-  flex-direction:column;
-  color:#fff;
-  padding-bottom:24px;
-}
-.game-dark-screen .app-header{
-  background:transparent;
-  padding:18px 16px;
-}
-.game-dark-screen .app-header img.logo{
-  filter:brightness(0) invert(1);
-  height:44px;
-}
-.game-dark-card{
-  background:#fff;
-  color:#172033;
-  border-radius:24px;
-  margin:12px 18px;
-  padding:34px 22px;
-  text-align:center;
-  box-shadow:0 18px 40px rgba(0,0,0,.25);
-}
-.game-dark-screen .spinner{
-  width:56px;height:56px;
-  border:5px solid #E5E7EB;
-  border-top-color:#1769C2;
-  border-radius:50%;
-  margin:0 auto 20px;
-  animation:spin 1s linear infinite;
-}
-.game-dark-screen h2{
-  font-size:20px;font-weight:800;color:#0B3D91;margin-bottom:8px;
-}
-.game-dark-screen .game-dark-card p{
-  color:#6B7280;font-size:13px;
-}
-.game-title-light{
-  text-align:center;color:#fff;font-size:19px;font-weight:800;
-  margin:6px 0 4px;
-}
-.game-subtitle-light{
-  text-align:center;color:rgba(255,255,255,.8);font-size:12.5px;
-  margin-bottom:6px;padding:0 24px;
-}
-.attempts-remaining-light{
-  text-align:center;color:#fff;font-size:13px;font-weight:600;
-  margin-top:6px;
-}
-.attempts-remaining-light span{
-  color:var(--gold);font-weight:800;
-}
-.result-icon-circle{
-  width:64px;height:64px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:30px;margin:0 auto 16px;
-}
-.result-icon-lose{ background:#FEE2E2; }
-.result-icon-info{ background:#DBEAFE; }
-.result-icon-win{ background:#DCFCE7; }
-</style>
-
 </head>
 <body>
 <div class="phone">
 
-  <div id="screen-home">
-    <header class="app-header">
-      <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
-    </header>
+  <header class="app-header">
+    <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
+  </header>
 
-    <img src="assets/store_photo.png" alt="Boutique S&K SuperMarché" class="store-photo">
+  <main id="content">
 
-<section id="question-1" class="question-screen" style="display:none;">
-  <div class="question-card">
-    
-    <h2>Connaissez-vous S&amp;K SuperMarché ?</h2>
-    <p>Votre réponse nous aide à mieux vous connaître.</p>
-    <div class="question-options">
-      <button class="answer-btn" type="button">OUI</button>
-      <button class="answer-btn" type="button">NON</button>
-    </div>
-
-    <div class="question-dots" id="question-dots">
-      <span class="active"></span>
-      <span></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-  </div>
-</section>
-
-<section id="question-2" class="question-screen" style="display:none;">
-  <div class="question-card">
-    <div class="question-title">Quel est votre genre ?</div>
-
-    <div class="question-options">
-      <button class="answer-btn" type="button" data-next="2">FEMME</button>
-      <button class="answer-btn" type="button" data-next="2">HOMME</button>
-    </div>
-
-    <div class="question-dots question-dots-2">
-      <span class="active"></span>
-      <span class="active"></span>
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-  </div>
-</section>
-
-<section id="question-3" class="question-screen" style="display:none;">
-  <div class="question-card">
-    <div class="question-title">Quel âge avez-vous ?</div>
-
-    <div class="question-options">
-      <button class="answer-btn" type="button">18 – 21 ANS</button>
-      <button class="answer-btn" type="button">22 – 29 ANS</button>
-    </div>
-
-    <div class="question-dots question-dots-3">
-      <span class="active"></span>
-      <span class="active"></span>
-      <span class="active"></span>
-      <span></span>
-      <span></span>
-    </div>
-  </div>
-</section>
-
-<section id="question-4" class="question-screen" style="display:none;">
-  <div class="question-card">
-    <div class="question-title">Comment évaluez-vous S&amp;K SuperMarché ?</div>
-
-    <div class="rating-options">
-      <button class="rating-btn" type="button">★★★★★<span>Excellent</span></button>
-      <button class="rating-btn" type="button">★★★★<span>Très bien</span></button>
-      <button class="rating-btn" type="button">★★★<span>Bien</span></button>
-      <button class="rating-btn" type="button">★★<span>Moyen</span></button>
-      <button class="rating-btn" type="button">★<span>Pas bien</span></button>
-    </div>
-
-    <div class="question-dots question-dots-4">
-      <span class="active"></span>
-      <span class="active"></span>
-      <span class="active"></span>
-      <span class="active"></span>
-      <span></span>
-    </div>
-  </div>
-</section>
-
-<section id="question-5" class="question-screen" style="display:none;">
-  <div class="question-card">
-    <div class="question-title">Recommanderiez-vous S&amp;K SuperMarché à vos proches ?</div>
-
-    <div class="question-options">
-      <button class="answer-btn" type="button">OUI</button>
-      <button class="answer-btn" type="button">NON</button>
-    </div>
-
-    <div class="question-dots question-dots-5">
-      <span class="active"></span>
-      <span class="active"></span>
-      <span class="active"></span>
-      <span class="active"></span>
-      <span class="active"></span>
-    </div>
-  </div>
-</section>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-    <div class="anniversary-banner">
-      <div class="gold-label">S&K SUPERMARCHÉ</div>
-      <div class="ribbon-badge">
-        <div class="gold-number">17</div>
-        <div class="ribbon-label">ANNIVERSAIRE</div>
+    <section class="content-screen active" id="content-home">
+      <img src="assets/store_photo.png" alt="Boutique S&K SuperMarché" class="store-photo">
+      <div class="anniversary-banner">
+        <div class="gold-label">S&K SUPERMARCHÉ</div>
+        <div class="ribbon-badge">
+          <div class="gold-number">17</div>
+          <div class="ribbon-label">ANNIVERSAIRE</div>
+        </div>
+        <h2>17 ANS À VOS CÔTÉS</h2>
+        <p>Participez à notre jeu-concours anniversaire</p>
       </div>
-      <img src="assets/gift_banner.png" alt="Cadeau anniversaire" class="gift-visual" onerror="this.style.display='none'">
-      <h2>17 ANS À VOS CÔTÉS</h2>
-      <p>Participez à notre jeu-concours anniversaire</p>
-    </div>
+    </section>
 
-  </div>
-
-  
-
-  
-
-  
-
-  
-
-  
-
-  <section id="screen-loading" class="game-dark-screen" style="display:none;">
-    <header class="app-header"><img src="assets/logo.png" alt="S&K SuperMarché" class="logo"></header>
-    <div class="game-dark-card" style="margin-top:auto;margin-bottom:auto;">
-      <div class="spinner"></div>
-      <h2>Veuillez patienter...</h2>
-      <p>Nous préparons votre participation...</p>
-    </div>
-  </section>
-
-  <section id="screen-grid" class="game-dark-screen" style="display:none;">
-    <header class="app-header"><img src="assets/logo.png" alt="S&K SuperMarché" class="logo"></header>
-    <div class="game-title-light">🎡 Tentez votre chance !</div>
-    <div class="game-subtitle-light">Tournez la roue et gagnez des produits S&amp;K !</div>
-    <div class="wheel-wrap">
-      <div class="wheel-container">
-        <div class="wheel-pointer"></div>
-        <canvas id="wheel-canvas" class="wheel-svg" width="300" height="300"></canvas>
+    <section class="content-screen" id="content-q1">
+      <div class="app-card">
+        <h2>Connaissez-vous S&amp;K SuperMarché ?</h2>
+        <p class="card-desc">Votre réponse nous aide à mieux vous connaître.</p>
+        <div class="question-options">
+          <button class="answer-btn" type="button" data-value="OUI">OUI</button>
+          <button class="answer-btn" type="button" data-value="NON">NON</button>
+        </div>
+        <div class="question-dots"><span class="active"></span><span></span><span></span><span></span><span></span></div>
       </div>
-      <button class="btn btn-primary" id="spin-btn" type="button">Tourner la roue</button>
-      <div class="attempts-remaining-light">Essais restants : <span id="attempts-count">3</span></div>
-    </div>
-  </section>
+    </section>
 
-  <section id="screen-won" class="game-dark-screen" style="display:none;">
-    <header class="app-header"><img src="assets/logo.png" alt="S&K SuperMarché" class="logo"></header>
-    <div class="game-dark-card" style="margin:24px 18px;">
-      <div class="result-icon-circle result-icon-win" style="font-size:34px;">🎉</div>
-      <h2>Félicitations !</h2>
-      <p style="margin-bottom:4px;">Vous avez gagné :</p>
-      <p style="font-size:20px;font-weight:800;color:#0B3D91;margin-bottom:18px;" id="won-prize-label">-</p>
-      <button class="btn btn-primary" id="won-next-btn" type="button">Suivant</button>
-    </div>
-  </section>
-
-
-  <div class="overlay" id="popup-welcome">
-    <div class="popup-card">
-      <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
-      <h1>Félicitations ! 🎉</h1>
-      <p>À l'occasion de notre 17e anniversaire, vous êtes invité(e) à participer à notre jeu-concours et à tenter de remporter un cadeau.</p>
-      <p class="free-note">Participation gratuite.</p>
-      <button class="btn btn-primary" onclick="hidePopup('popup-welcome'); goToScreen('screen-q1')">Continuer ✅</button>
-      
-    </div>
-  </div>
-
-  <div class="overlay" id="popup-intro">
-    <div class="popup-card intro-popup">
-      <img src="assets/logo.png" alt="S&K SuperMarché" class="logo" style="height:44px;">
-      <h1>Félicitations ! 🎉</h1>
-      <p>Vos réponses ont été enregistrées.</p>
-      <p>C'est le moment de tenter votre chance !</p>
-      <p>Faites tourner la roue et gagnez des produits S&amp;K.</p>
-      <div class="attempts-badge">Vous disposez de 3 essais</div>
-      <button class="btn btn-primary" onclick="hidePopup('popup-intro'); goToScreen('screen-grid')">Commencer maintenant</button>
-    </div>
-  </div>
-
-  <div class="overlay" id="popup-lose">
-    <div class="popup-card">
-      <div class="result-icon-circle result-icon-info" id="lose-icon" style="font-size:28px;">ℹ️</div>
-      <h1 id="lose-title">Bonne chance la prochaine fois !</h1>
-      <p id="lose-text">Cette case ne contenait pas le cadeau.</p>
-      <button class="btn btn-primary" id="lose-btn" type="button">D'accord</button>
-    </div>
-  </div>
-
-  <section id="screen-winner-form" class="screen" style="display:none;">
-    <header class="app-header">
-      <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
-    </header>
-
-    <h2 class="question-title" style="text-align:center;">Veuillez remplir correctement<br>les informations :</h2>
-
-    <div class="winner-field">
-      <div class="winner-field-icon">👤</div>
-      <div class="winner-field-content">
-        <label>Nom complet</label>
-        <input type="text" id="winner-fullname" placeholder="Ex : Jean Dupont">
+    <section class="content-screen" id="content-q2">
+      <div class="app-card">
+        <h2>Quel est votre genre ?</h2>
+        <div class="question-options">
+          <button class="answer-btn" type="button" data-value="FEMME">FEMME</button>
+          <button class="answer-btn" type="button" data-value="HOMME">HOMME</button>
+        </div>
+        <div class="question-dots"><span class="active"></span><span class="active"></span><span></span><span></span><span></span></div>
       </div>
-    </div>
+    </section>
 
-    <div class="winner-field">
-      <div class="winner-field-icon">📞</div>
-      <div class="winner-field-content">
-        <label>Numéro de téléphone</label>
-        <input type="tel" id="winner-phone" placeholder="Ex : +243 81 234 56 78">
+    <section class="content-screen" id="content-q3">
+      <div class="app-card">
+        <h2>Quel âge avez-vous ?</h2>
+        <div class="question-options">
+          <button class="answer-btn" type="button" data-value="18-21 ANS">18 – 21 ANS</button>
+          <button class="answer-btn" type="button" data-value="22-29 ANS">22 – 29 ANS</button>
+        </div>
+        <div class="question-dots"><span class="active"></span><span class="active"></span><span class="active"></span><span></span><span></span></div>
       </div>
-    </div>
+    </section>
 
-    <div class="winner-field">
-      <div class="winner-field-icon">📍</div>
-      <div class="winner-field-content">
-        <label>Adresse</label>
-        <input type="text" id="winner-address" placeholder="Ex : 123, Avenue de la Paix">
+    <section class="content-screen" id="content-q4">
+      <div class="app-card">
+        <h2>Comment évaluez-vous S&amp;K SuperMarché ?</h2>
+        <div class="rating-options">
+          <button class="rating-btn" type="button" data-value="Excellent">★★★★★ Excellent</button>
+          <button class="rating-btn" type="button" data-value="Tres bien">★★★★ Très bien</button>
+          <button class="rating-btn" type="button" data-value="Bien">★★★ Bien</button>
+          <button class="rating-btn" type="button" data-value="Moyen">★★ Moyen</button>
+          <button class="rating-btn" type="button" data-value="Pas bien">★ Pas bien</button>
+        </div>
+        <div class="question-dots"><span class="active"></span><span class="active"></span><span class="active"></span><span class="active"></span><span></span></div>
       </div>
-    </div>
+    </section>
 
-    <div class="winner-field">
-      <div class="winner-field-icon">🎯</div>
-      <div class="winner-field-content">
-        <label>Ville</label>
-        <input type="text" id="winner-city" placeholder="Ex : Lubumbashi">
+    <section class="content-screen" id="content-q5">
+      <div class="app-card">
+        <h2>Recommanderiez-vous S&amp;K SuperMarché à vos proches ?</h2>
+        <div class="question-options">
+          <button class="answer-btn" type="button" data-value="OUI">OUI</button>
+          <button class="answer-btn" type="button" data-value="NON">NON</button>
+        </div>
+        <div class="question-dots"><span class="active"></span><span class="active"></span><span class="active"></span><span class="active"></span><span class="active"></span></div>
       </div>
-    </div>
+    </section>
 
-    <div class="winner-field">
-      <div class="winner-field-icon">✉️</div>
-      <div class="winner-field-content">
-        <label>E-mail</label>
-        <input type="email" id="winner-email" placeholder="Ex : jean@email.com">
+    <section class="content-screen" id="content-loading">
+      <div class="app-card">
+        <div class="spinner"></div>
+        <h2>Veuillez patienter...</h2>
+        <p class="card-desc" style="margin-bottom:0;">Nous préparons votre participation...</p>
       </div>
-    </div>
+    </section>
 
-    <div class="privacy-note">
-      <span class="privacy-icon">ℹ️</span>
-      <span>Vos informations sont utilisées uniquement pour le traitement de votre participation et/ou la remise du cadeau.</span>
-    </div>
+    <section class="content-screen" id="content-wheel">
+      <div class="app-card">
+        <h2 style="margin-bottom:2px;">Tentez votre chance !</h2>
+        <p class="card-desc">Tournez la roue et gagnez des produits S&amp;K !</p>
+        <div class="wheel-container">
+          <div class="wheel-pointer"></div>
+          <canvas id="wheel-canvas" class="wheel-svg" width="300" height="300"></canvas>
+        </div>
+        <button class="btn btn-primary" id="spin-btn" type="button">Tourner la roue</button>
+        <div class="attempts-remaining">Essais restants : <span id="attempts-count">3</span></div>
+      </div>
+    </section>
 
-    <p id="winner-form-error" style="color:var(--error);font-size:12px;display:none;text-align:center;">Merci de remplir tous les champs.</p>
-    <button class="btn btn-primary" id="winner-form-submit">Confirmer</button>
+    <section class="content-screen" id="content-won">
+      <div class="app-card">
+        <h2>Félicitations !</h2>
+        <p class="card-desc" style="margin-bottom:18px;">Vous avez gagné :</p>
 
-  </section>
+        <div style="position:relative;max-width:260px;margin:0 auto 22px;background:linear-gradient(135deg,#FFD874,var(--gold));border-radius:16px;border:2px dashed rgba(11,61,145,.35);padding:22px 16px;overflow:visible;">
+          <div style="position:absolute;left:-11px;top:50%;transform:translateY(-50%);width:22px;height:22px;background:#FFFFFF;border-radius:50%;"></div>
+          <div style="position:absolute;right:-11px;top:50%;transform:translateY(-50%);width:22px;height:22px;background:#FFFFFF;border-radius:50%;"></div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:2px;color:#123E70;margin-bottom:8px;">🎟️ COUPON CADEAU</div>
+          <div style="font-size:20px;font-weight:800;color:#0B3D91;line-height:1.3;" id="won-prize-label">-</div>
+        </div>
+
+        <p class="card-desc" style="font-size:12px;margin-bottom:20px;">Suivez les instructions de la page suivante pour réclamer votre prix.</p>
+        <button class="btn btn-primary" id="won-next-btn" type="button">Suivant</button>
+      </div>
+    </section>
+
+    <section class="content-screen" id="content-winner-form">
+      <div class="app-card" style="text-align:left;">
+        <h2 style="text-align:center;">Veuillez remplir correctement<br>les informations :</h2>
+        <div style="margin-top:10px;">
+          <div class="winner-field">
+            <div class="winner-field-icon">•</div>
+            <div class="winner-field-content"><label>Nom complet</label><input type="text" id="winner-fullname" placeholder="Ex : Jean Dupont"></div>
+          </div>
+          <div class="winner-field">
+            <div class="winner-field-icon">•</div>
+            <div class="winner-field-content"><label>Numéro de téléphone</label><input type="tel" id="winner-phone" placeholder="Ex : +243 81 234 56 78"></div>
+          </div>
+          <div class="winner-field">
+            <div class="winner-field-icon">•</div>
+            <div class="winner-field-content"><label>Adresse</label><input type="text" id="winner-address" placeholder="Ex : 123, Avenue de la Paix"></div>
+          </div>
+          <div class="winner-field">
+            <div class="winner-field-icon">•</div>
+            <div class="winner-field-content"><label>Ville</label><input type="text" id="winner-city" placeholder="Ex : Lubumbashi"></div>
+          </div>
+          <div class="winner-field">
+            <div class="winner-field-icon">•</div>
+            <div class="winner-field-content"><label>E-mail</label><input type="email" id="winner-email" placeholder="Ex : jean@email.com"></div>
+          </div>
+          <div class="privacy-note"><span>i</span><span>Vos informations sont utilisées uniquement pour le traitement de votre participation et/ou la remise du cadeau.</span></div>
+          <p id="winner-form-error" style="color:var(--error);font-size:12px;display:none;text-align:center;margin-bottom:10px;">Merci de remplir tous les champs.</p>
+          <button class="btn btn-primary" id="winner-form-submit" type="button">Confirmer</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
 
   <footer class="app-footer">
     <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
@@ -1587,70 +379,206 @@ body.question-mode #screen-home > footer.app-footer{
     <div class="copyright">© 2026 S&K SuperMarché. Tous droits réservés.</div>
   </footer>
 
+  <div class="overlay" id="popup-welcome">
+    <div class="popup-card">
+      <img src="assets/logo.png" alt="S&K SuperMarché" class="logo">
+      <h1>Félicitations ! 🎉</h1>
+      <p>À l'occasion de notre 17e anniversaire, vous êtes invité(e) à participer à notre jeu-concours et à tenter de remporter un cadeau.</p>
+      <p class="free-note">Participation gratuite.</p>
+      <button class="btn btn-primary" id="welcome-continue-btn" type="button">Continuer</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="popup-intro">
+    <div class="popup-card">
+      <img src="assets/logo.png" alt="S&K SuperMarché" class="logo" style="height:40px;">
+      <h1>Félicitations !</h1>
+      <p>Vos réponses ont été enregistrées.</p>
+      <p>C'est le moment de tenter votre chance !</p>
+      <p>Faites tourner la roue et gagnez des produits S&amp;K.</p>
+      <div class="attempts-badge">Vous disposez de 3 essais</div>
+      <button class="btn btn-primary" id="intro-start-btn" type="button">Commencer maintenant</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="popup-lose">
+    <div class="popup-card">
+      <div class="result-icon-circle result-icon-info" id="lose-icon">i</div>
+      <h1 id="lose-title">Bonne chance la prochaine fois !</h1>
+      <p id="lose-text">Cette case ne contenait pas le cadeau.</p>
+      <button class="btn btn-primary" id="lose-btn" type="button">D'accord</button>
+    </div>
+  </div>
+
   <div class="overlay" id="popup-share">
     <div class="popup-card">
-      <h1>Partagez votre chance ! 🎉</h1>
-      <p>Partagez ce lien sur WhatsApp <strong>5 fois</strong> pour débloquer votre reçu de gain.</p>
-      <div class="share-progress-bar">
-        <div class="share-progress-fill" id="share-progress-fill"></div>
+      <h1>Partagez votre expérience</h1>
+      <p>Invitez vos amis à découvrir notre anniversaire.</p>
+      <div class="share-options">
+        <button class="share-option-btn share-whatsapp-opt" id="share-whatsapp-btn" type="button">
+          <img src="assets/whatsapp-share.svg" class="share-option-icon-img" alt="WhatsApp"><span>WhatsApp</span>
+        </button>
+        <button class="share-option-btn share-facebook-opt" id="share-facebook-btn" type="button">
+          <img src="assets/facebook-share.svg" class="share-option-icon-img" alt="Facebook"><span>Facebook</span>
+        </button>
+        <button class="share-option-btn share-messenger-opt" id="share-messenger-btn" type="button">
+          <img src="assets/messenger.svg" class="share-option-icon-img" alt="Messenger"><span>Messenger</span>
+        </button>
+        <button class="share-option-btn share-copy-opt" id="share-copy-btn" type="button">
+          <span class="share-option-icon">#</span><span>Copier le lien</span>
+        </button>
       </div>
-      <div class="share-progress-label"><span id="share-count">0</span>/5 partages effectués</div>
-      <button class="btn btn-whatsapp" id="share-whatsapp-btn" type="button" style="margin-bottom:10px;">Partager sur WhatsApp</button>
-      <button class="btn btn-primary" id="share-continue-btn" type="button" style="display:none;">Voir mon reçu</button>
+      <div class="share-progress-row">
+        <div class="share-progress-bar"><div class="share-progress-fill" id="share-progress-fill"></div></div>
+        <span class="share-progress-percent" id="share-progress-percent">0%</span>
+      </div>
+      <button class="btn btn-primary" id="share-continue-btn" type="button" style="display:none;margin-top:12px;">Voir mon reçu</button>
     </div>
   </div>
 
   <div class="overlay" id="popup-winner-confirm">
     <div class="popup-card">
-      <div class="result-icon-circle result-icon-win" style="font-size:30px;">✅</div>
-      <h1>Félicitations ! 🎉</h1>
+      <div class="result-icon-circle result-icon-win" style="font-size:28px;">✓</div>
+      <h1>Félicitations !</h1>
       <p>Vos informations ont bien été enregistrées.</p>
       <p class="free-note">Votre participation est confirmée.</p>
-      <p style="font-size:13px;color:#6B7280;">Numéro de participation :<br><strong id="winner-participation-id">-</strong></p>
-      <button class="btn btn-primary" id="download-receipt-btn" type="button" style="margin-bottom:10px;">Télécharger mon reçu (PDF)</button>
-      <button class="btn btn-primary" onclick="location.reload()" style="background:#9CA3AF;">Terminer</button>
+      <p style="font-size:13px;color:var(--text-muted);">Numéro de participation :<br><strong id="winner-participation-id">-</strong></p>
+      <button class="btn btn-primary" id="download-receipt-btn" type="button" style="margin:14px 0 10px;">Télécharger mon reçu (PDF)</button>
+      <button class="btn btn-secondary" id="finish-btn" type="button">Terminer</button>
     </div>
   </div>
 
-</div>
+  <section id="screen-thanks" style="display:none; position:fixed; inset:0; z-index:60; padding:0;">
+    <div style="background:linear-gradient(160deg,#0B2A4A 0%,#1457A0 55%,#1769C2 100%); min-height:100dvh; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px 24px; position:relative; overflow:hidden;">
+      <div style="font-size:40px; margin-bottom:14px;">❤️</div>
+      <h1 style="color:#fff; font-size:30px; font-weight:800; margin-bottom:10px;">Merci !</h1>
+      <p style="color:#fff; opacity:.9; font-size:14px; margin-bottom:28px;">Merci pour votre participation et votre confiance.</p>
+      <div style="font-size:64px; font-weight:800; color:var(--gold); line-height:1; margin-bottom:6px;">17</div>
+      <div style="background:var(--gold); color:#123E70; font-size:12px; font-weight:800; letter-spacing:2px; padding:6px 20px; border-radius:4px; margin-bottom:32px;">ANNIVERSAIRE</div>
+      <p style="color:#fff; opacity:.85; font-size:13px; margin-bottom:36px;">Ensemble pour toujours !</p>
+      <button class="btn btn-primary" id="thanks-home-btn" type="button" style="max-width:280px;">Retour à l'accueil</button>
+    </div>
+  </section>
 
+</div>
 <script type="module">
-  import { db } from './firebase-config.js';
-  import { collection, getDocs, query, where, addDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+  import { initializeApp } from 'firebase/app';
+  import { getFirestore, collection, getDocs, query, where, limit, addDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+
+  var firebaseConfig = {
+    apiKey: "AIzaSyAY-UZX7zRz-mP4F0VMNTPwW6nFFeaZdUg",
+    authDomain: "sk-marche-katanga.firebaseapp.com",
+    projectId: "sk-marche-katanga",
+    storageBucket: "sk-marche-katanga.firebasestorage.app",
+    messagingSenderId: "993068861502",
+    appId: "1:993068861502:web:0b9e16c0cce16d597f696f"
+  };
+  var firebaseApp = initializeApp(firebaseConfig);
+  var db = getFirestore(firebaseApp);
 
   var attemptsLeft = 3;
-  var currentCadeauNom = 'un cadeau surprise';
+  var currentCadeauNom = 'Cadeau surprise';
   var currentParticipationRef = null;
   var theWheel = null;
+  window.answers = {};
 
-  function createWheel(){
+  function showContent(id){
+    document.querySelectorAll('#content .content-screen').forEach(function(el){ el.classList.remove('active'); });
+    var target = document.getElementById(id);
+    if(target) target.classList.add('active');
+  }
+  function hidePopup(id){ document.getElementById(id).classList.remove('show'); }
+  function showPopup(id){ document.getElementById(id).classList.add('show'); }
+  function goHomeThenPopup(popupId){
+    showContent('content-home');
+    showPopup(popupId);
+  }
+
+  function wireQuestion(currentId, nextId, key, isLast){
+    var section = document.getElementById(currentId);
+    var buttons = section.querySelectorAll('.answer-btn, .rating-btn');
+    buttons.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        window.answers[key] = btn.getAttribute('data-value') || btn.textContent.trim();
+        if(isLast){
+          submitQuiz();
+        } else {
+          showContent(nextId);
+        }
+      });
+    });
+  }
+
+  function submitQuiz(){
+    showContent('content-loading');
+    saveParticipation();
+    setTimeout(function(){
+      goHomeThenPopup('popup-intro');
+    }, 1800);
+  }
+
+  async function saveParticipation(){
+    try{
+      var ref = await addDoc(collection(db, 'participations'), {
+        reponses: window.answers || {},
+        dateCreation: serverTimestamp(),
+        resultat: 'en_cours'
+      });
+      currentParticipationRef = ref;
+    }catch(err){
+      console.error('Erreur enregistrement participation:', err);
+    }
+  }
+
+  async function chargerCadeauxDisponibles(){
+    var noms = [];
+    try{
+      var cadeauxRef = collection(db, 'cadeaux');
+      var q = query(cadeauxRef, where('disponible', '==', true), limit(3));
+      var snapshot = await getDocs(q);
+      snapshot.forEach(function(doc){
+        var nom = doc.data().nom;
+        if(nom) noms.push(nom);
+      });
+    }catch(err){
+      console.error('Erreur lecture Firestore cadeaux:', err);
+    }
+    while(noms.length < 3){ noms.push('Cadeau surprise'); }
+    return noms;
+  }
+
+  function buildWheelSegments(gainNoms){
+    var winIndexes = [2, 5, 8];
+    var segments = [];
+    var winPos = 0;
+    for(var i = 0; i < 9; i++){
+      if(winIndexes.indexOf(i) !== -1){
+        segments.push({
+          'fillStyle': '#F4B942', 'text': gainNoms[winPos], 'textFillStyle': '#123E70', 'textFontSize': 11
+        });
+        winPos++;
+      } else {
+        var color = (i % 2 === 0) ? '#1769C2' : '#2F80D0';
+        segments.push({ 'fillStyle': color, 'text': 'X', 'textFillStyle': '#FFFFFF', 'textFontSize': 16 });
+      }
+    }
+    return segments;
+  }
+
+  async function initWheel(){
     if(typeof Winwheel === 'undefined' || typeof TweenMax === 'undefined'){
       console.error('Winwheel.js ou TweenMax non chargé (vérifiez la connexion internet).');
       return;
     }
+    var gainNoms = await chargerCadeauxDisponibles();
     theWheel = new Winwheel({
       'canvasId'    : 'wheel-canvas',
       'numSegments' : 9,
       'outerRadius' : 140,
       'lineWidth'   : 1,
       'strokeStyle' : '#FFFFFF',
-      'segments'    : [
-        {'fillStyle':'#1769C2','text':'X','textFillStyle':'#FFFFFF','textFontSize':16},
-        {'fillStyle':'#2F80D0','text':'X','textFillStyle':'#FFFFFF','textFontSize':16},
-        {'fillStyle':'#F4B942','text':'15 000 FC','textFillStyle':'#123E70','textFontSize':13},
-        {'fillStyle':'#1769C2','text':'X','textFillStyle':'#FFFFFF','textFontSize':16},
-        {'fillStyle':'#2F80D0','text':'X','textFillStyle':'#FFFFFF','textFontSize':16},
-        {'fillStyle':'#F4B942','text':'25 000 FC','textFillStyle':'#123E70','textFontSize':13},
-        {'fillStyle':'#1769C2','text':'X','textFillStyle':'#FFFFFF','textFontSize':16},
-        {'fillStyle':'#2F80D0','text':'X','textFillStyle':'#FFFFFF','textFontSize':16},
-        {'fillStyle':'#F4B942','text':'35 000 FC','textFillStyle':'#123E70','textFontSize':13}
-      ],
-      'animation' : {
-        'type'             : 'spinToStop',
-        'duration'         : 5,
-        'spins'            : 8,
-        'callbackFinished' : onWheelStop
-      }
+      'segments'    : buildWheelSegments(gainNoms),
+      'animation' : { 'type':'spinToStop', 'duration':5, 'spins':8, 'callbackFinished':onWheelStop }
     });
   }
 
@@ -1661,20 +589,21 @@ body.question-mode #screen-home > footer.app-footer{
     var btn = document.getElementById('lose-btn');
 
     if(isFinal){
-      icon.textContent = '😞';
+      icon.textContent = 'x';
       icon.className = 'result-icon-circle result-icon-lose';
       title.textContent = 'Bonne chance la prochaine fois !';
       text.textContent = "Vous n'avez plus d'essai disponible pour cette participation.";
       btn.textContent = 'Terminé';
       btn.onclick = function(){ location.reload(); };
     } else {
-      icon.textContent = 'ℹ️';
+      icon.textContent = 'i';
       icon.className = 'result-icon-circle result-icon-info';
       title.textContent = 'Bonne chance la prochaine fois !';
       text.textContent = "Cette case ne contenait pas le cadeau. Il vous reste " + attemptsLeft + " essai(s).";
       btn.textContent = "D'accord";
       btn.onclick = function(){
         hidePopup('popup-lose');
+        showContent('content-wheel');
         var spinBtn = document.getElementById('spin-btn');
         if(spinBtn) spinBtn.disabled = false;
         theWheel.stopAnimation(false);
@@ -1682,8 +611,7 @@ body.question-mode #screen-home > footer.app-footer{
         theWheel.draw();
       };
     }
-
-    showPopup('popup-lose');
+    goHomeThenPopup('popup-lose');
   }
 
   function onWheelStop(indicatedSegment){
@@ -1700,7 +628,7 @@ body.question-mode #screen-home > footer.app-footer{
       }
       var wonLabel = document.getElementById('won-prize-label');
       if(wonLabel) wonLabel.textContent = currentCadeauNom;
-      setTimeout(function(){ goToScreen('screen-won'); }, 400);
+      setTimeout(function(){ showContent('content-won'); }, 400);
       return;
     }
 
@@ -1722,731 +650,369 @@ body.question-mode #screen-home > footer.app-footer{
     theWheel.startAnimation();
   }
 
-  function goToScreen(targetId){
-    var screenIds = ['screen-home','screen-loading','screen-grid','screen-won','screen-winner-form'];
-    screenIds.forEach(function(id){
-      var el = document.getElementById(id);
-      if(el){ el.style.display = 'none'; }
-    });
-    var target = document.getElementById(targetId);
-    if(target){ target.style.display = ''; }
-  }
-
-  function hidePopup(id){
-    document.getElementById(id).classList.remove('show');
-  }
-  function showPopup(id){
-    document.getElementById(id).classList.add('show');
-  }
-
-  async function chargerCadeauGagnant(){
-    try{
-      var cadeauxRef = collection(db, 'cadeaux');
-      var q = query(cadeauxRef, where('disponible', '==', true));
-      var snapshot = await getDocs(q);
-      if(!snapshot.empty){
-        var docs = snapshot.docs;
-        var pick = docs[Math.floor(Math.random() * docs.length)];
-        currentCadeauNom = pick.data().nom || currentCadeauNom;
-      }
-    }catch(err){
-      console.error('Erreur lecture Firestore cadeaux:', err);
-    }
-  }
-
-  async function saveParticipation(){
-    try{
-      var ref = await addDoc(collection(db, 'participations'), {
-        reponses: window.answers || {},
-        dateCreation: serverTimestamp(),
-        resultat: 'en_cours'
-      });
-      currentParticipationRef = ref;
-    }catch(err){
-      console.error('Erreur enregistrement participation:', err);
-    }
-  }
-
-  function submitQuiz(){
-    goToScreen('screen-loading');
-    saveParticipation();
-    chargerCadeauGagnant();
-    setTimeout(function(){
-      showPopup('popup-intro');
-    }, 1800);
-  }
-
-  window.goToScreen = goToScreen;
-  window.hidePopup = hidePopup;
-  window.showPopup = showPopup;
-  window.submitQuiz = submitQuiz;
-  window.spinWheel = spinWheel;
-
-
-
-  document.addEventListener('DOMContentLoaded', function(){
-    createWheel();
-    var wonNextBtn = document.getElementById('won-next-btn');
-    if(wonNextBtn){
-      wonNextBtn.addEventListener('click', function(){ goToScreen('screen-winner-form'); });
-    }
-
-    var spinBtnEl = document.getElementById('spin-btn');
-    if(spinBtnEl){
-      spinBtnEl.addEventListener('click', spinWheel);
-    }
-
-    var shareCount = 0;
-    var shareBtn = document.getElementById('share-whatsapp-btn');
-    var shareContinueBtn = document.getElementById('share-continue-btn');
-    var shareFill = document.getElementById('share-progress-fill');
-    var shareCountLabel = document.getElementById('share-count');
-
-    if(shareBtn){
-      shareBtn.addEventListener('click', function(){
-        var msg = encodeURIComponent('Je participe au jeu-concours du 17e anniversaire de S&K Supermarché Katanga ! Tentez votre chance vous aussi.');
-        window.open('https://wa.me/?text=' + msg, '_blank');
-
-        if(shareCount < 5){
-          shareCount++;
-          shareCountLabel.textContent = shareCount;
-          shareFill.style.width = (shareCount * 20) + '%';
-        }
-
-        if(shareCount >= 5){
-          shareBtn.style.display = 'none';
-          shareContinueBtn.style.display = 'block';
-        }
-      });
-    }
-
-    if(shareContinueBtn){
-      shareContinueBtn.addEventListener('click', function(){
-        hidePopup('popup-share');
-        showPopup('popup-winner-confirm');
-      });
-    }
-
-    function loadLogoCropped(url){
-      return new Promise(function(resolve, reject){
-        var img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = function(){
-          try{
-            var canvas = document.createElement('canvas');
-            canvas.width = img.naturalWidth;
-            canvas.height = img.naturalHeight;
-            var ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-            var minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0, found = false;
-            for(var y = 0; y < canvas.height; y += 2){
-              for(var x = 0; x < canvas.width; x += 2){
-                var idx = (y * canvas.width + x) * 4;
-                var r = imgData[idx], g = imgData[idx+1], b = imgData[idx+2], a = imgData[idx+3];
-                var isWhite = r > 245 && g > 245 && b > 245;
-                if(a > 20 && !isWhite){
-                  found = true;
-                  if(x < minX) minX = x;
-                  if(x > maxX) maxX = x;
-                  if(y < minY) minY = y;
-                  if(y > maxY) maxY = y;
-                }
+  function loadLogoCropped(url){
+    return new Promise(function(resolve, reject){
+      var img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = function(){
+        try{
+          var canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          var ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          var imgData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+          var minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0, found = false;
+          for(var y = 0; y < canvas.height; y += 2){
+            for(var x = 0; x < canvas.width; x += 2){
+              var idx = (y * canvas.width + x) * 4;
+              var r = imgData[idx], g = imgData[idx+1], b = imgData[idx+2], a = imgData[idx+3];
+              var isWhite = r > 245 && g > 245 && b > 245;
+              if(a > 20 && !isWhite){
+                found = true;
+                if(x < minX) minX = x;
+                if(x > maxX) maxX = x;
+                if(y < minY) minY = y;
+                if(y > maxY) maxY = y;
               }
             }
-            if(!found){ minX = 0; minY = 0; maxX = canvas.width; maxY = canvas.height; }
-            var pad = Math.round(canvas.width * 0.015);
-            minX = Math.max(0, minX - pad);
-            minY = Math.max(0, minY - pad);
-            maxX = Math.min(canvas.width, maxX + pad);
-            maxY = Math.min(canvas.height, maxY + pad);
-            var cropW = Math.max(1, maxX - minX);
-            var cropH = Math.max(1, maxY - minY);
+          }
+          if(!found){ minX = 0; minY = 0; maxX = canvas.width; maxY = canvas.height; }
+          var pad = Math.round(canvas.width * 0.015);
+          minX = Math.max(0, minX - pad);
+          minY = Math.max(0, minY - pad);
+          maxX = Math.min(canvas.width, maxX + pad);
+          maxY = Math.min(canvas.height, maxY + pad);
+          var cropW = Math.max(1, maxX - minX);
+          var cropH = Math.max(1, maxY - minY);
+          var outCanvas = document.createElement('canvas');
+          outCanvas.width = cropW;
+          outCanvas.height = cropH;
+          var outCtx = outCanvas.getContext('2d');
+          outCtx.drawImage(canvas, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
+          resolve({ dataUrl: outCanvas.toDataURL('image/png'), width: cropW, height: cropH });
+        }catch(e){ reject(e); }
+      };
+      img.onerror = function(e){ reject(e); };
+      img.src = url;
+    });
+  }
 
-            var outCanvas = document.createElement('canvas');
-            outCanvas.width = cropW;
-            outCanvas.height = cropH;
-            var outCtx = outCanvas.getContext('2d');
-            outCtx.drawImage(canvas, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
+  function drawCartIcon(doc, cx, cy, s, color){
+    doc.setDrawColor(color[0], color[1], color[2]);
+    doc.setFillColor(color[0], color[1], color[2]);
+    doc.setLineWidth(Math.max(0.3, s * 0.05));
+    doc.rect(cx - s * 0.5, cy - s * 0.3, s, s * 0.5, 'S');
+    doc.line(cx - s * 0.5, cy - s * 0.3, cx - s * 0.65, cy - s * 0.55);
+    doc.line(cx - s * 0.65, cy - s * 0.55, cx - s * 0.15, cy - s * 0.55);
+    doc.circle(cx - s * 0.25, cy + s * 0.35, s * 0.07, 'F');
+    doc.circle(cx + s * 0.25, cy + s * 0.35, s * 0.07, 'F');
+  }
 
-            resolve({ dataUrl: outCanvas.toDataURL('image/png'), width: cropW, height: cropH });
-          }catch(e){ reject(e); }
-        };
-        img.onerror = function(e){ reject(e); };
-        img.src = url;
-      });
+  function drawStarIcon(doc, cx, cy, s, color){
+    doc.setFillColor(color[0], color[1], color[2]);
+    var points = [];
+    for(var i = 0; i < 5; i++){
+      var angleOuter = (-90 + i * 72) * Math.PI / 180;
+      var angleInner = (-90 + i * 72 + 36) * Math.PI / 180;
+      points.push([cx + s * Math.cos(angleOuter), cy + s * Math.sin(angleOuter)]);
+      points.push([cx + s * 0.4 * Math.cos(angleInner), cy + s * 0.4 * Math.sin(angleInner)]);
     }
-
-    function drawCartIcon(doc, cx, cy, s, color){
-      doc.setDrawColor(color[0], color[1], color[2]);
-      doc.setFillColor(color[0], color[1], color[2]);
-      doc.setLineWidth(Math.max(0.3, s * 0.05));
-      doc.rect(cx - s * 0.5, cy - s * 0.3, s, s * 0.5, 'S');
-      doc.line(cx - s * 0.5, cy - s * 0.3, cx - s * 0.65, cy - s * 0.55);
-      doc.line(cx - s * 0.65, cy - s * 0.55, cx - s * 0.15, cy - s * 0.55);
-      doc.circle(cx - s * 0.25, cy + s * 0.35, s * 0.07, 'F');
-      doc.circle(cx + s * 0.25, cy + s * 0.35, s * 0.07, 'F');
+    var segs = [];
+    for(var i = 1; i < points.length; i++){
+      segs.push([points[i][0] - points[i-1][0], points[i][1] - points[i-1][1]]);
     }
+    doc.lines(segs, points[0][0], points[0][1], [1, 1], 'F', true);
+  }
 
-    function drawStarIcon(doc, cx, cy, s, color){
-      doc.setFillColor(color[0], color[1], color[2]);
-      var points = [];
-      for(var i = 0; i < 5; i++){
-        var angleOuter = (-90 + i * 72) * Math.PI / 180;
-        var angleInner = (-90 + i * 72 + 36) * Math.PI / 180;
-        points.push([cx + s * Math.cos(angleOuter), cy + s * Math.sin(angleOuter)]);
-        points.push([cx + s * 0.4 * Math.cos(angleInner), cy + s * 0.4 * Math.sin(angleInner)]);
+  async function generateReceiptPDF(){
+    var data = window.winnerReceiptData || {};
+    var jsPDFLib = window.jspdf ? window.jspdf.jsPDF : null;
+    if(!jsPDFLib){
+      alert('Le generateur de PDF n a pas pu se charger. Verifiez votre connexion internet.');
+      return;
+    }
+    var doc = new jsPDFLib({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    var pageW = doc.internal.pageSize.getWidth();
+    var pageH = doc.internal.pageSize.getHeight();
+    var margin = 12;
+    var NAVY = [11, 61, 145];
+    var GOLD = [255, 193, 7];
+    var LIGHT_BLUE = [227, 238, 253];
+    var GRAY_TEXT = [107, 114, 128];
+    var DARK_TEXT = [17, 24, 39];
+    var PALE_GRAY = [232, 236, 244];
+    var participationId = data.participationId || '-';
+    var headerH = 34;
+    var splitX = pageW * 0.40;
+    var slant = 10;
+
+    doc.setFillColor(255, 255, 255);
+    doc.rect(0, 0, pageW, headerH, 'F');
+    doc.setFillColor(NAVY[0], NAVY[1], NAVY[2]);
+    doc.lines([[pageW - (splitX + slant), 0], [0, headerH], [(splitX - slant) - pageW, 0]], splitX + slant, 0, [1, 1], 'F', true);
+    doc.setFillColor(GOLD[0], GOLD[1], GOLD[2]);
+    doc.lines([[3, 0], [-2 * slant, headerH], [-3, 0]], splitX + slant - 3, 0, [1, 1], 'F', true);
+    doc.setFillColor(GOLD[0], GOLD[1], GOLD[2]);
+    doc.rect(0, headerH, pageW, 1.4, 'F');
+
+    try{
+      var logo = await loadLogoCropped('assets/logo.png');
+      var maxLogoW = (splitX - slant) - margin - 4;
+      var maxLogoH = headerH - 10;
+      var ratio = Math.min(maxLogoW / logo.width, maxLogoH / logo.height);
+      doc.addImage(logo.dataUrl, 'PNG', margin, (headerH - logo.height * ratio) / 2, logo.width * ratio, logo.height * ratio);
+    }catch(err){ console.error('Reçu PDF : logo introuvable.', err); }
+
+    doc.setFont(undefined, 'normal'); doc.setFontSize(9); doc.setTextColor(255,255,255);
+    doc.text('Email : sk.supermarche.cd@gmail.com', pageW - margin, 11, { align: 'right' });
+    doc.text('Tel : +243 998 765 432', pageW - margin, 16.5, { align: 'right' });
+    doc.text('Lubumbashi, RDC', pageW - margin, 22, { align: 'right' });
+
+    var titleY = 45;
+    doc.setFont(undefined, 'bold'); doc.setFontSize(30); doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
+    doc.text('REÇU', margin, titleY);
+    doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]);
+    doc.rect(margin, titleY + 2.2, 28, 1.4, 'F');
+    doc.setFont(undefined, 'normal'); doc.setFontSize(11); doc.setTextColor(GRAY_TEXT[0],GRAY_TEXT[1],GRAY_TEXT[2]);
+    doc.text('Jeu concours 17e anniversaire', margin, titleY + 10);
+
+    doc.setFontSize(9); doc.setTextColor(GRAY_TEXT[0],GRAY_TEXT[1],GRAY_TEXT[2]);
+    doc.text('N° REÇU', pageW - margin, titleY - 6, { align: 'right' });
+    doc.setFont(undefined, 'bold'); doc.setFontSize(13);
+    var idW = doc.getTextWidth(String(participationId)) + 8;
+    doc.setFillColor(LIGHT_BLUE[0],LIGHT_BLUE[1],LIGHT_BLUE[2]);
+    doc.roundedRect(pageW - margin - idW, titleY - 4.5, idW, 8, 1.5, 1.5, 'F');
+    doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
+    doc.text(String(participationId), pageW - margin - idW / 2, titleY + 1, { align: 'center' });
+
+    var footerH = 24;
+    var contentTop = 62;
+    var contentBottom = pageH - footerH - 8;
+    var leftW = pageW * 0.60 - margin;
+    var leftX = margin;
+    var rightX = leftX + leftW + 8;
+    var rightW = pageW - rightX - margin;
+
+    doc.setDrawColor(190,210,245); doc.setLineWidth(0.5); doc.setFillColor(255,255,255);
+    doc.roundedRect(leftX, contentTop, leftW, contentBottom - contentTop, 3, 3, 'FD');
+
+    var innerX = leftX + 8;
+    var innerW = leftW - 16;
+    var barH = 10;
+    doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);
+    doc.rect(leftX + 0.6, contentTop + 0.6, leftW - 1.2, barH, 'F');
+    doc.setDrawColor(255,255,255); doc.setLineWidth(0.3);
+    doc.rect(innerX, contentTop + 2.6, 4.6, 3.6, 'S');
+    doc.line(innerX, contentTop + 4.4, innerX + 4.6, contentTop + 4.4);
+    doc.line(innerX + 2.3, contentTop + 2.6, innerX + 2.3, contentTop + 1.4);
+    doc.setFont(undefined, 'bold'); doc.setFontSize(12); doc.setTextColor(255,255,255);
+    doc.text('DÉTAILS DU GAIN', innerX + 8, contentTop + 7);
+
+    var cy = contentTop + barH + 8;
+    var fields = [
+      ['Cadeau gagné', data.cadeau || '-'],
+      ['Nom complet', data.fullName || '-'],
+      ['Téléphone', data.phone || '-'],
+      ['Adresse', data.address || '-'],
+      ['Ville', data.city || '-'],
+      ['E-mail', data.email || '-']
+    ];
+    var rowH = 9;
+    fields.forEach(function(field){
+      doc.setFont(undefined, 'normal'); doc.setFontSize(8); doc.setTextColor(GRAY_TEXT[0],GRAY_TEXT[1],GRAY_TEXT[2]);
+      doc.text(field[0].toUpperCase(), innerX, cy);
+      var valueLines = doc.splitTextToSize(String(field[1]), innerW - 2);
+      doc.setFont(undefined, 'bold'); doc.setFontSize(9.5); doc.setTextColor(DARK_TEXT[0],DARK_TEXT[1],DARK_TEXT[2]);
+      doc.text(valueLines, innerX, cy + 4);
+      doc.setDrawColor(230,230,230); doc.setLineWidth(0.3);
+      doc.line(innerX, cy + rowH - 2, innerX + innerW, cy + rowH - 2);
+      cy += rowH;
+    });
+
+    cy += 2;
+    doc.setFillColor(LIGHT_BLUE[0],LIGHT_BLUE[1],LIGHT_BLUE[2]);
+    doc.roundedRect(innerX, cy, innerW, 9, 2, 2, 'F');
+    doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);
+    doc.circle(innerX + 4, cy + 4.5, 1.5, 'F');
+    doc.setFont(undefined, 'bold'); doc.setFontSize(9.5); doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
+    doc.text('Numéro de participation : ' + participationId, innerX + 8, cy + 5.8);
+    cy += 9 + 3;
+
+    var msg = "Veuillez passer dans l'un de nos supermarchés S&K Katanga pour réclamer votre ticket gagnant.";
+    var msgLines = doc.splitTextToSize(msg, innerW - 8);
+    var msgH = (msgLines.length * 4.2) + 7;
+    doc.setFillColor(LIGHT_BLUE[0],LIGHT_BLUE[1],LIGHT_BLUE[2]);
+    doc.setDrawColor(NAVY[0],NAVY[1],NAVY[2]); doc.setLineWidth(0.4);
+    doc.roundedRect(innerX, cy, innerW, msgH, 2, 2, 'FD');
+    doc.setFont(undefined, 'bold'); doc.setFontSize(9); doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
+    doc.text(msgLines, innerX + 4, cy + 5);
+    cy += msgH + 3;
+
+    doc.setFont(undefined, 'italic'); doc.setFontSize(7.5); doc.setTextColor(GRAY_TEXT[0],GRAY_TEXT[1],GRAY_TEXT[2]);
+    var subLines = doc.splitTextToSize('Nos supermarchés sont situés à Lubumbashi et dans toute la province du Haut-Katanga.', innerW);
+    doc.text(subLines, innerX, cy);
+
+    doc.setDrawColor(220,220,220); doc.setLineWidth(0.4);
+    doc.roundedRect(rightX, contentTop, rightW, contentBottom - contentTop, 3, 3, 'D');
+    var wmCX = rightX + rightW / 2;
+    var wmCY = contentTop + (contentBottom - contentTop) * 0.36;
+    drawCartIcon(doc, wmCX, wmCY, 26, PALE_GRAY);
+    doc.setFont(undefined, 'italic'); doc.setFontSize(12); doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
+    doc.text('Votre gain vous attend !', rightX + rightW / 2, contentTop + 16, { align: 'center' });
+
+    var stampCY = contentTop + (contentBottom - contentTop) * 0.62;
+    doc.setDrawColor(GOLD[0],GOLD[1],GOLD[2]); doc.setLineWidth(0.6);
+    doc.circle(rightX + rightW / 2, stampCY, 14, 'D');
+    doc.setDrawColor(NAVY[0],NAVY[1],NAVY[2]); doc.setLineWidth(0.35);
+    doc.circle(rightX + rightW / 2, stampCY, 12, 'D');
+    drawCartIcon(doc, rightX + rightW / 2, stampCY - 4, 9, NAVY);
+    doc.setFont(undefined, 'bold'); doc.setFontSize(9); doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
+    doc.text('S&K', rightX + rightW / 2, stampCY + 3, { align: 'center' });
+    doc.setFont(undefined, 'normal'); doc.setFontSize(5.5);
+    doc.text('SUPERMARCHÉ KATANGA', rightX + rightW / 2, stampCY + 7, { align: 'center' });
+
+    var sigY = contentBottom - 14;
+    doc.setDrawColor(150,150,150); doc.setLineWidth(0.3);
+    doc.line(rightX + 10, sigY, rightX + rightW - 10, sigY);
+    doc.setFont(undefined, 'normal'); doc.setFontSize(9); doc.setTextColor(DARK_TEXT[0],DARK_TEXT[1],DARK_TEXT[2]);
+    doc.text('La Direction', rightX + rightW / 2, sigY + 5, { align: 'center' });
+
+    doc.setFont(undefined, 'italic'); doc.setFontSize(8.5); doc.setTextColor(GRAY_TEXT[0],GRAY_TEXT[1],GRAY_TEXT[2]);
+    doc.text('Merci de votre fidélité ! Joyeux 17e anniversaire S&K.', pageW / 2, pageH - footerH - 3, { align: 'center' });
+
+    var footerY = pageH - footerH;
+    doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]); doc.rect(0, footerY, pageW, footerH, 'F');
+    doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]); doc.rect(0, footerY, pageW, 1.4, 'F');
+    drawCartIcon(doc, margin + 4, footerY + 11, 9, [255,255,255]);
+    doc.setFont(undefined, 'bold'); doc.setFontSize(11); doc.setTextColor(255,255,255);
+    doc.text('S&K Supermarché Katanga', margin + 12, footerY + 12);
+    doc.setFont(undefined, 'normal'); doc.setFontSize(8.5);
+    doc.text('Votre satisfaction, notre priorité !', margin + 12, footerY + 18);
+    drawStarIcon(doc, pageW - margin - 48, footerY + 12.5, 2.4, GOLD);
+    doc.setFontSize(9);
+    doc.text('Merci de faire confiance à S&K !', pageW - margin, footerY + 15, { align: 'right' });
+
+    doc.save('recu-gain-sk-' + participationId + '.pdf');
+  }
+
+  document.addEventListener('DOMContentLoaded', function(){
+    initWheel();
+
+    setTimeout(function(){ goHomeThenPopup('popup-welcome'); }, 3000);
+
+    document.getElementById('welcome-continue-btn').addEventListener('click', function(){
+      hidePopup('popup-welcome');
+      showContent('content-q1');
+    });
+
+    wireQuestion('content-q1', 'content-q2', 'connaitSK', false);
+    wireQuestion('content-q2', 'content-q3', 'genre', false);
+    wireQuestion('content-q3', 'content-q4', 'age', false);
+    wireQuestion('content-q4', 'content-q5', 'evaluation', false);
+    wireQuestion('content-q5', null, 'recommande', true);
+
+    document.getElementById('intro-start-btn').addEventListener('click', function(){
+      hidePopup('popup-intro');
+      showContent('content-wheel');
+    });
+
+    document.getElementById('spin-btn').addEventListener('click', spinWheel);
+    document.getElementById('won-next-btn').addEventListener('click', function(){
+      showContent('content-winner-form');
+    });
+
+    var shareCount = 0;
+    var shareContinueBtn = document.getElementById('share-continue-btn');
+    var shareFill = document.getElementById('share-progress-fill');
+    var sharePercentLabel = document.getElementById('share-progress-percent');
+    var shareUrl = window.location.href;
+    var shareMessage = 'Je participe au jeu-concours du 17e anniversaire de S&K Supermarché Katanga ! Tentez votre chance vous aussi.';
+
+    function registerShare(){
+      if(shareCount < 5){
+        shareCount++;
+        var pct = shareCount * 20;
+        if(sharePercentLabel) sharePercentLabel.textContent = pct + '%';
+        if(shareFill) shareFill.style.width = pct + '%';
       }
-      var segs = [];
-      for(var i = 1; i < points.length; i++){
-        segs.push([points[i][0] - points[i-1][0], points[i][1] - points[i-1][1]]);
+      if(shareCount >= 5){
+        document.querySelectorAll('.share-option-btn').forEach(function(b){ b.style.display = 'none'; });
+        if(shareContinueBtn) shareContinueBtn.style.display = 'block';
       }
-      doc.lines(segs, points[0][0], points[0][1], [1, 1], 'F', true);
     }
 
-    async function generateReceiptPDF(){
-      var data = window.winnerReceiptData || {};
-      var jsPDFLib = window.jspdf ? window.jspdf.jsPDF : null;
-      if(!jsPDFLib){
-        alert('Le generateur de PDF n a pas pu se charger. Verifiez votre connexion internet.');
+    document.getElementById('share-whatsapp-btn').addEventListener('click', function(){
+      window.open('https://wa.me/?text=' + encodeURIComponent(shareMessage + ' ' + shareUrl), '_blank');
+      registerShare();
+    });
+    document.getElementById('share-facebook-btn').addEventListener('click', function(){
+      window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl), '_blank');
+      registerShare();
+    });
+    document.getElementById('share-messenger-btn').addEventListener('click', function(){
+      window.open('https://www.facebook.com/dialog/send?link=' + encodeURIComponent(shareUrl) + '&app_id=0&redirect_uri=' + encodeURIComponent(shareUrl), '_blank');
+      registerShare();
+    });
+    document.getElementById('share-copy-btn').addEventListener('click', function(){
+      var btn = this;
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(shareUrl).then(function(){
+          btn.querySelector('span:last-child').textContent = 'Lien copié !';
+          setTimeout(function(){ btn.querySelector('span:last-child').textContent = 'Copier le lien'; }, 1500);
+        }).catch(function(){ alert('Lien : ' + shareUrl); });
+      } else {
+        alert('Lien : ' + shareUrl);
+      }
+      registerShare();
+    });
+    shareContinueBtn.addEventListener('click', function(){
+      hidePopup('popup-share');
+      showPopup('popup-winner-confirm');
+    });
+
+    document.getElementById('download-receipt-btn').addEventListener('click', async function(){
+      try{ await generateReceiptPDF(); }
+      catch(err){ console.error('Erreur génération reçu PDF:', err); alert('Erreur reçu PDF : ' + (err && err.message ? err.message : err)); }
+    });
+    document.getElementById('finish-btn').addEventListener('click', function(){
+      hidePopup('popup-winner-confirm');
+      var thanksScreen = document.getElementById('screen-thanks');
+      if(thanksScreen) thanksScreen.style.display = 'block';
+    });
+    var thanksHomeBtn = document.getElementById('thanks-home-btn');
+    if(thanksHomeBtn){
+      thanksHomeBtn.addEventListener('click', function(){ location.reload(); });
+    }
+
+    document.getElementById('winner-form-submit').addEventListener('click', async function(){
+      var fullName = document.getElementById('winner-fullname').value.trim();
+      var phone = document.getElementById('winner-phone').value.trim();
+      var address = document.getElementById('winner-address').value.trim();
+      var city = document.getElementById('winner-city').value.trim();
+      var email = document.getElementById('winner-email').value.trim();
+      var errorEl = document.getElementById('winner-form-error');
+
+      if(!fullName || !phone || !address || !city || !email){
+        errorEl.style.display = 'block';
         return;
       }
+      errorEl.style.display = 'none';
 
-      var doc = new jsPDFLib({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-      var pageW = doc.internal.pageSize.getWidth();
-      var pageH = doc.internal.pageSize.getHeight();
-      var margin = 12;
-
-      var NAVY = [11, 61, 145];
-      var GOLD = [255, 193, 7];
-      var LIGHT_BLUE = [227, 238, 253];
-      var GRAY_TEXT = [107, 114, 128];
-      var DARK_TEXT = [17, 24, 39];
-      var PALE_GRAY = [232, 236, 244];
-      var participationId = data.participationId || '-';
-
-      var headerH = 34;
-      var splitX = pageW * 0.40;
-      var slant = 10;
-
-      doc.setFillColor(255, 255, 255);
-      doc.rect(0, 0, pageW, headerH, 'F');
-
-      doc.setFillColor(NAVY[0], NAVY[1], NAVY[2]);
-      doc.lines(
-        [[pageW - (splitX + slant), 0], [0, headerH], [(splitX - slant) - pageW, 0]],
-        splitX + slant, 0, [1, 1], 'F', true
-      );
-
-      doc.setFillColor(GOLD[0], GOLD[1], GOLD[2]);
-      doc.lines(
-        [[3, 0], [-2 * slant, headerH], [-3, 0]],
-        splitX + slant - 3, 0, [1, 1], 'F', true
-      );
-
-      doc.setFillColor(GOLD[0], GOLD[1], GOLD[2]);
-      doc.rect(0, headerH, pageW, 1.4, 'F');
-
-      try{
-        var logo = await loadLogoCropped('assets/logo.png');
-        var maxLogoW = (splitX - slant) - margin - 4;
-        var maxLogoH = headerH - 10;
-        var ratio = Math.min(maxLogoW / logo.width, maxLogoH / logo.height);
-        var logoW = logo.width * ratio;
-        var logoH = logo.height * ratio;
-        doc.addImage(logo.dataUrl, 'PNG', margin, (headerH - logoH) / 2, logoW, logoH);
-      }catch(err){
-        console.error('Reçu PDF : logo introuvable, generation sans logo.', err);
-      }
-
-      doc.setFont(undefined, 'normal');
-      doc.setFontSize(9);
-      doc.setTextColor(255, 255, 255);
-      doc.text('• Email : sk.supermarche.cd@gmail.com', pageW - margin, 11, { align: 'right' });
-      doc.text('• Tel : +243 998 765 432', pageW - margin, 16.5, { align: 'right' });
-      doc.text('• Lubumbashi, RDC', pageW - margin, 22, { align: 'right' });
-
-      var titleY = 45;
-      doc.setFont(undefined, 'bold');
-      doc.setFontSize(30);
-      doc.setTextColor(NAVY[0], NAVY[1], NAVY[2]);
-      doc.text('REÇU', margin, titleY);
-      doc.setFillColor(GOLD[0], GOLD[1], GOLD[2]);
-      doc.rect(margin, titleY + 2.2, 28, 1.4, 'F');
-
-      doc.setFont(undefined, 'normal');
-      doc.setFontSize(11);
-      doc.setTextColor(GRAY_TEXT[0], GRAY_TEXT[1], GRAY_TEXT[2]);
-      doc.text('Jeu concours 17e anniversaire', margin, titleY + 10);
-
-      doc.setFontSize(9);
-      doc.setTextColor(GRAY_TEXT[0], GRAY_TEXT[1], GRAY_TEXT[2]);
-      doc.text('N° REÇU', pageW - margin, titleY - 6, { align: 'right' });
-      doc.setFont(undefined, 'bold');
-      doc.setFontSize(13);
-      var idW = doc.getTextWidth(String(participationId)) + 8;
-      doc.setFillColor(LIGHT_BLUE[0], LIGHT_BLUE[1], LIGHT_BLUE[2]);
-      doc.roundedRect(pageW - margin - idW, titleY - 4.5, idW, 8, 1.5, 1.5, 'F');
-      doc.setTextColor(NAVY[0], NAVY[1], NAVY[2]);
-      doc.text(String(participationId), pageW - margin - idW / 2, titleY + 1, { align: 'center' });
-
-      var footerH = 24;
-      var contentTop = 62;
-      var contentBottom = pageH - footerH - 8;
-      var leftW = pageW * 0.60 - margin;
-      var leftX = margin;
-      var rightX = leftX + leftW + 8;
-      var rightW = pageW - rightX - margin;
-
-      doc.setDrawColor(190, 210, 245);
-      doc.setLineWidth(0.5);
-      doc.setFillColor(255, 255, 255);
-      doc.roundedRect(leftX, contentTop, leftW, contentBottom - contentTop, 3, 3, 'FD');
-
-      var innerX = leftX + 8;
-      var innerW = leftW - 16;
-      var barH = 10;
-
-      doc.setFillColor(NAVY[0], NAVY[1], NAVY[2]);
-      doc.rect(leftX + 0.6, contentTop + 0.6, leftW - 1.2, barH, 'F');
-
-      doc.setDrawColor(255, 255, 255);
-      doc.setLineWidth(0.3);
-      doc.rect(innerX, contentTop + 2.6, 4.6, 3.6, 'S');
-      doc.line(innerX, contentTop + 4.4, innerX + 4.6, contentTop + 4.4);
-      doc.line(innerX + 2.3, contentTop + 2.6, innerX + 2.3, contentTop + 1.4);
-
-      doc.setFont(undefined, 'bold');
-      doc.setFontSize(12);
-      doc.setTextColor(255, 255, 255);
-      doc.text('DÉTAILS DU GAIN', innerX + 8, contentTop + 7);
-
-      var cy = contentTop + barH + 8;
-
-      var fields = [
-        ['Cadeau gagné', data.cadeau || '-'],
-        ['Nom complet', data.fullName || '-'],
-        ['Téléphone', data.phone || '-'],
-        ['Adresse', data.address || '-'],
-        ['Ville', data.city || '-'],
-        ['E-mail', data.email || '-']
-      ];
-      var rowH = 9;
-
-      fields.forEach(function(field){
-        doc.setFont(undefined, 'normal');
-        doc.setFontSize(8);
-        doc.setTextColor(GRAY_TEXT[0], GRAY_TEXT[1], GRAY_TEXT[2]);
-        doc.text(field[0].toUpperCase(), innerX, cy);
-
-        var valueLines = doc.splitTextToSize(String(field[1]), innerW - 2);
-        doc.setFont(undefined, 'bold');
-        doc.setFontSize(9.5);
-        doc.setTextColor(DARK_TEXT[0], DARK_TEXT[1], DARK_TEXT[2]);
-        doc.text(valueLines, innerX, cy + 4);
-
-        doc.setDrawColor(230, 230, 230);
-        doc.setLineWidth(0.3);
-        doc.line(innerX, cy + rowH - 2, innerX + innerW, cy + rowH - 2);
-        cy += rowH;
-      });
-
-      cy += 2;
-      doc.setFillColor(LIGHT_BLUE[0], LIGHT_BLUE[1], LIGHT_BLUE[2]);
-      doc.roundedRect(innerX, cy, innerW, 9, 2, 2, 'F');
-      doc.setFillColor(NAVY[0], NAVY[1], NAVY[2]);
-      doc.circle(innerX + 4, cy + 4.5, 1.5, 'F');
-      doc.setFont(undefined, 'bold');
-      doc.setFontSize(9.5);
-      doc.setTextColor(NAVY[0], NAVY[1], NAVY[2]);
-      doc.text('Numéro de participation : ' + participationId, innerX + 8, cy + 5.8);
-      cy += 9 + 3;
-
-      var msg = "Veuillez passer dans l'un de nos supermarchés S&K Katanga pour réclamer votre ticket gagnant.";
-      var msgLines = doc.splitTextToSize(msg, innerW - 8);
-      var msgH = (msgLines.length * 4.2) + 7;
-      doc.setFillColor(LIGHT_BLUE[0], LIGHT_BLUE[1], LIGHT_BLUE[2]);
-      doc.setDrawColor(NAVY[0], NAVY[1], NAVY[2]);
-      doc.setLineWidth(0.4);
-      doc.roundedRect(innerX, cy, innerW, msgH, 2, 2, 'FD');
-      doc.setFont(undefined, 'bold');
-      doc.setFontSize(9);
-      doc.setTextColor(NAVY[0], NAVY[1], NAVY[2]);
-      doc.text(msgLines, innerX + 4, cy + 5);
-      cy += msgH + 3;
-
-      doc.setFont(undefined, 'italic');
-      doc.setFontSize(7.5);
-      doc.setTextColor(GRAY_TEXT[0], GRAY_TEXT[1], GRAY_TEXT[2]);
-      var subLines = doc.splitTextToSize('Nos supermarchés sont situés à Lubumbashi et dans toute la province du Haut-Katanga.', innerW);
-      doc.text(subLines, innerX, cy);
-
-      doc.setDrawColor(220, 220, 220);
-      doc.setLineWidth(0.4);
-      doc.roundedRect(rightX, contentTop, rightW, contentBottom - contentTop, 3, 3, 'D');
-
-      var wmCX = rightX + rightW / 2;
-      var wmCY = contentTop + (contentBottom - contentTop) * 0.36;
-      drawCartIcon(doc, wmCX, wmCY, 26, PALE_GRAY);
-
-      doc.setFont(undefined, 'italic');
-      doc.setFontSize(12);
-      doc.setTextColor(NAVY[0], NAVY[1], NAVY[2]);
-      doc.text('Votre gain vous attend !', rightX + rightW / 2, contentTop + 16, { align: 'center' });
-
-      var stampCY = contentTop + (contentBottom - contentTop) * 0.62;
-      doc.setDrawColor(GOLD[0], GOLD[1], GOLD[2]);
-      doc.setLineWidth(0.6);
-      doc.circle(rightX + rightW / 2, stampCY, 14, 'D');
-      doc.setDrawColor(NAVY[0], NAVY[1], NAVY[2]);
-      doc.setLineWidth(0.35);
-      doc.circle(rightX + rightW / 2, stampCY, 12, 'D');
-      drawCartIcon(doc, rightX + rightW / 2, stampCY - 4, 9, NAVY);
-      doc.setFont(undefined, 'bold');
-      doc.setFontSize(9);
-      doc.setTextColor(NAVY[0], NAVY[1], NAVY[2]);
-      doc.text('S&K', rightX + rightW / 2, stampCY + 3, { align: 'center' });
-      doc.setFont(undefined, 'normal');
-      doc.setFontSize(5.5);
-      doc.text('SUPERMARCHÉ KATANGA', rightX + rightW / 2, stampCY + 7, { align: 'center' });
-
-      var sigY = contentBottom - 14;
-      doc.setDrawColor(150, 150, 150);
-      doc.setLineWidth(0.3);
-      doc.line(rightX + 10, sigY, rightX + rightW - 10, sigY);
-      doc.setFont(undefined, 'normal');
-      doc.setFontSize(9);
-      doc.setTextColor(DARK_TEXT[0], DARK_TEXT[1], DARK_TEXT[2]);
-      doc.text('La Direction', rightX + rightW / 2, sigY + 5, { align: 'center' });
-
-      doc.setFont(undefined, 'italic');
-      doc.setFontSize(8.5);
-      doc.setTextColor(GRAY_TEXT[0], GRAY_TEXT[1], GRAY_TEXT[2]);
-      doc.text('Merci de votre fidélité ! Joyeux 17e anniversaire S&K.', pageW / 2, pageH - footerH - 3, { align: 'center' });
-
-      var footerY = pageH - footerH;
-      doc.setFillColor(NAVY[0], NAVY[1], NAVY[2]);
-      doc.rect(0, footerY, pageW, footerH, 'F');
-      doc.setFillColor(GOLD[0], GOLD[1], GOLD[2]);
-      doc.rect(0, footerY, pageW, 1.4, 'F');
-
-      drawCartIcon(doc, margin + 4, footerY + 11, 9, [255, 255, 255]);
-
-      doc.setFont(undefined, 'bold');
-      doc.setFontSize(11);
-      doc.setTextColor(255, 255, 255);
-      doc.text('S&K Supermarché Katanga', margin + 12, footerY + 12);
-      doc.setFont(undefined, 'normal');
-      doc.setFontSize(8.5);
-      doc.text('Votre satisfaction, notre priorité !', margin + 12, footerY + 18);
-
-      drawStarIcon(doc, pageW - margin - 48, footerY + 12.5, 2.4, GOLD);
-      doc.setFontSize(9);
-      doc.text('Merci de faire confiance à S&K !', pageW - margin, footerY + 15, { align: 'right' });
-
-      doc.save('recu-gain-sk-' + participationId + '.pdf');
-    }
-
-    var downloadBtn = document.getElementById('download-receipt-btn');
-    if(downloadBtn){
-      downloadBtn.addEventListener('click', async function(){
+      var participationId = currentParticipationRef ? currentParticipationRef.id : '-';
+      if(currentParticipationRef){
         try{
-          await generateReceiptPDF();
-        }catch(err){
-          console.error('Erreur génération reçu PDF:', err);
-          alert('Erreur reçu PDF : ' + (err && err.message ? err.message : err));
-        }
-      });
-    }
-
-    var winnerSubmitBtn = document.getElementById('winner-form-submit');
-    if(winnerSubmitBtn){
-      winnerSubmitBtn.addEventListener('click', async function(){
-        var fullName = document.getElementById('winner-fullname').value.trim();
-        var phone = document.getElementById('winner-phone').value.trim();
-        var address = document.getElementById('winner-address').value.trim();
-        var city = document.getElementById('winner-city').value.trim();
-        var email = document.getElementById('winner-email').value.trim();
-        var errorEl = document.getElementById('winner-form-error');
-
-        if(!fullName || !phone || !address || !city || !email){
-          errorEl.style.display = 'block';
-          return;
-        }
-        errorEl.style.display = 'none';
-
-        var participationId = currentParticipationRef ? currentParticipationRef.id : '-';
-        if(currentParticipationRef){
-          try{
-            await updateDoc(currentParticipationRef, {
-              gagnant: { fullName: fullName, phone: phone, address: address, city: city, email: email }
-            });
-          }catch(err){
-            console.error('Erreur enregistrement gagnant:', err);
-          }
-        }
-
-        document.getElementById('winner-participation-id').textContent = participationId;
-        window.winnerReceiptData = { fullName: fullName, phone: phone, address: address, city: city, email: email, cadeau: currentCadeauNom, participationId: participationId };
-        goToScreen('screen-home');
-        document.getElementById('screen-home').style.display = 'none';
-        showPopup('popup-share');
-      });
-    }
-
-    var q5 = document.getElementById('question-5');
-    if(q5){
-      q5.querySelectorAll('.answer-btn').forEach(function(btn){
-        btn.addEventListener('click', function(){
-          window.answers = window.answers || {};
-          window.answers.recommande = btn.textContent.trim();
-          q5.style.display = 'none';
-          submitQuiz();
-        });
-      });
-    }
-  });
-</script>
-
-
-<script id="welcome-popup-delay">
-document.addEventListener('DOMContentLoaded', function () {
-  const popup = document.getElementById('popup-welcome');
-  if (!popup) return;
-
-  popup.style.setProperty('display', 'none', 'important');
-
-  setTimeout(function () {
-    popup.style.setProperty('display', 'flex', 'important');
-  }, 3000);
-});
-</script>
-
-
-<style id="popup-fixed-size">
-#popup-welcome{
-  box-sizing:border-box !important;
-  padding:20px !important;
-}
-
-#popup-welcome > div{
-  box-sizing:border-box !important;
-  width:min(90vw,360px) !important;
-  height:420px !important;
-  min-height:420px !important;
-  max-height:420px !important;
-  padding:24px 20px !important;
-  overflow:hidden !important;
-  display:flex !important;
-  flex-direction:column !important;
-  justify-content:center !important;
-  align-items:center !important;
-}
-
-#popup-welcome img{
-  width:140px !important;
-  height:90px !important;
-  object-fit:contain !important;
-  flex:none !important;
-  margin-bottom:14px !important;
-}
-</style>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<script id="question-final-control">
-document.addEventListener('DOMContentLoaded',function(){
-
-  const popup=document.getElementById('popup-welcome');
-  const question=document.getElementById('question-1');
-  const banner=document.querySelector('.anniversary-banner');
-  const homeFooter=document.querySelector('footer.app-footer');
-  const questionFooter=document.getElementById('questions-footer');
-
-  if(!popup || !question) return;
-
-  document.querySelectorAll('#popup-welcome button').forEach(function(btn){
-
-    if(
-      btn.textContent.trim().toLowerCase().includes('continuer') ||
-      btn.textContent.trim().toLowerCase().includes('participer')
-    ){
-
-      btn.addEventListener('click',function(){
-
-        if(banner) banner.style.display='none';
-        if(homeFooter) homeFooter.style.display='none';
-
-        question.style.display='block';
-
-        document.body.classList.add('question-mode');
-        document.documentElement.classList.add('question-mode');
-
-      });
-
-    }
-
-  });
-
-});
-</script>
-
-
-<script id="continue-question-fix">
-document.addEventListener("DOMContentLoaded", function () {
-  const popup = document.getElementById("popup-welcome");
-  const question = document.getElementById("question-1");
-  const banner = document.querySelector(".anniversary-banner");
-  const homeFooter = document.querySelector("footer.app-footer");
-  
-
-  if (!popup || !question) return;
-
-  const buttons = popup.querySelectorAll("button");
-
-  buttons.forEach(function (button) {
-    const text = button.textContent.trim().toLowerCase();
-
-    if (text.includes("continuer") || text.includes("participer")) {
-      button.onclick = function () {
-
-        popup.style.display = "none";
-
-        if (banner) {
-          banner.style.display = "none";
-        }
-
-        if (homeFooter) {
-          homeFooter.style.display = "none";
-        }
-
-        question.style.display = "block";
-
-        document.body.classList.add("question-mode");
-        document.documentElement.classList.add("question-mode");
-      };
-    }
-  });
-});
-</script>
-
-
-<script id="question-dots-script">
-function updateQuestionDots(step){
-  const dots=document.querySelectorAll('#question-dots span');
-
-  dots.forEach(function(dot,index){
-    dot.classList.toggle('active',index < step);
-  });
-}
-</script>
-
-
-<script id="question-2-control">
-document.addEventListener("DOMContentLoaded",function(){
-
-  const q1=document.getElementById("question-1");
-  const q2=document.getElementById("question-2");
-
-  if(!q1 || !q2) return;
-
-  q1.querySelectorAll(".answer-btn").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      window.answers = window.answers || {};
-      window.answers.connaitSK = btn.textContent.trim();
-      q1.style.display="none";
-      q2.style.display="block";
-    });
-  });
-
-});
-</script>
-
-
-<script id="question-3-control">
-document.addEventListener("DOMContentLoaded",function(){
-
-  const q2=document.getElementById("question-2");
-  const q3=document.getElementById("question-3");
-
-  if(!q2 || !q3) return;
-
-  q2.querySelectorAll(".answer-btn").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      window.answers = window.answers || {};
-      window.answers.genre = btn.textContent.trim();
-      q2.style.display="none";
-      q3.style.display="block";
-    });
-  });
-
-});
-</script>
-
-
-<script id="question-4-control">
-document.addEventListener("DOMContentLoaded",function(){
-
-  const q3=document.getElementById("question-3");
-  const q4=document.getElementById("question-4");
-
-  if(!q3 || !q4) return;
-
-  q3.querySelectorAll(".answer-btn").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      window.answers = window.answers || {};
-      window.answers.age = btn.textContent.trim();
-      q3.style.display="none";
-      q4.style.display="block";
-    });
-  });
-
-  q4.querySelectorAll(".rating-btn").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      window.answers = window.answers || {};
-      var span = btn.querySelector("span");
-      window.answers.evaluation = span ? span.textContent.trim() : btn.textContent.trim();
-      q4.style.display="none";
-
-      const q5=document.getElementById("question-5");
-      if(q5){
-        q5.style.display="block";
+          await updateDoc(currentParticipationRef, {
+            gagnant: { fullName: fullName, phone: phone, address: address, city: city, email: email }
+          });
+        }catch(err){ console.error('Erreur enregistrement gagnant:', err); }
       }
+
+      document.getElementById('winner-participation-id').textContent = participationId;
+      window.winnerReceiptData = { fullName: fullName, phone: phone, address: address, city: city, email: email, cadeau: currentCadeauNom, participationId: participationId };
+      goHomeThenPopup('popup-share');
     });
   });
-
-});
 </script>
-
-
-<script id="question-5-control">
-document.addEventListener("DOMContentLoaded",function(){
-
-  const q4=document.getElementById("question-4");
-  const q5=document.getElementById("question-5");
-
-  if(!q4 || !q5) return;
-
-  q4.querySelectorAll(".rating-btn").forEach(function(btn){
-    btn.addEventListener("click",function(){
-      q4.style.display="none";
-      q5.style.display="block";
-    });
-  });
-
-});
-</script>
-
 </body>
 </html>
