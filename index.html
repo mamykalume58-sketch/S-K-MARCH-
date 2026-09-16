@@ -1616,7 +1616,7 @@ body.question-mode #screen-home > footer.app-footer{
 
 <script type="module">
   import { db } from './firebase-config.js';
-  import { collection, getDocs, query, where, addDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import { collection, getDocs, query, where, addDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 
   var attemptsLeft = 3;
   var currentCadeauNom = 'un cadeau surprise';
@@ -1752,7 +1752,6 @@ body.question-mode #screen-home > footer.app-footer{
     }catch(err){
       console.error('Erreur lecture Firestore cadeaux:', err);
     }
-    winningIndex = Math.floor(Math.random() * 12);
   }
 
   async function saveParticipation(){
