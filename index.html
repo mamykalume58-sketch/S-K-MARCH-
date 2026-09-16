@@ -1484,6 +1484,17 @@ body.question-mode #screen-home > footer.app-footer{
     </div>
   </section>
 
+  <section id="screen-won" class="game-dark-screen" style="display:none;">
+    <header class="app-header"><img src="assets/logo.png" alt="S&K SuperMarché" class="logo"></header>
+    <div class="game-dark-card" style="margin:24px 18px;">
+      <div class="result-icon-circle result-icon-win" style="font-size:34px;">🎉</div>
+      <h2>Félicitations !</h2>
+      <p style="margin-bottom:4px;">Vous avez gagné :</p>
+      <p style="font-size:20px;font-weight:800;color:#0B3D91;margin-bottom:18px;" id="won-prize-label">-</p>
+      <button class="btn btn-primary" id="won-next-btn" type="button">Suivant</button>
+    </div>
+  </section>
+
 
   <div class="overlay" id="popup-welcome">
     <div class="popup-card">
@@ -1600,6 +1611,7 @@ body.question-mode #screen-home > footer.app-footer{
 
   <div class="overlay" id="popup-winner-confirm">
     <div class="popup-card">
+      <div class="result-icon-circle result-icon-win" style="font-size:30px;">✅</div>
       <h1>Félicitations ! 🎉</h1>
       <p>Vos informations ont bien été enregistrées.</p>
       <p class="free-note">Votre participation est confirmée.</p>
@@ -1695,7 +1707,9 @@ body.question-mode #screen-home > footer.app-footer{
       if(currentParticipationRef){
         updateDoc(currentParticipationRef, { resultat: 'gagne', cadeauGagne: currentCadeauNom }).catch(function(e){ console.error(e); });
       }
-      setTimeout(function(){ goToScreen('screen-winner-form'); }, 400);
+      var wonLabel = document.getElementById('won-prize-label');
+      if(wonLabel) wonLabel.textContent = currentCadeauNom;
+      setTimeout(function(){ goToScreen('screen-won'); }, 400);
       return;
     }
 
@@ -1718,7 +1732,7 @@ body.question-mode #screen-home > footer.app-footer{
   }
 
   function goToScreen(targetId){
-    var screenIds = ['screen-home','screen-loading','screen-grid','screen-winner-form'];
+    var screenIds = ['screen-home','screen-loading','screen-grid','screen-won','screen-winner-form'];
     screenIds.forEach(function(id){
       var el = document.getElementById(id);
       if(el){ el.style.display = 'none'; }
