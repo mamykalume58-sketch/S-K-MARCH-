@@ -393,9 +393,9 @@
     </div>
   </div>
 
-  <div class="overlay" id="popup-won">
+  <div class="overlay" id="popup-ad">
     <div class="app-card">
-      <h2>Félicitations !</h2>
+      <h2 style="margin-bottom:16px;">Un instant...</h2>
       <div style="display:flex;justify-content:center;margin:0 0 18px;">
         <script>
           atOptions = {
@@ -408,6 +408,13 @@
         </script>
         <script src="https://www.highrevenueformat.com/db7e76395543d38a5a0ac88434c12efb/invoke.js"></script>
       </div>
+      <button class="btn btn-primary" id="ad-continue-btn" type="button">Voir mon cadeau</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="popup-won">
+    <div class="app-card">
+      <h2>Félicitations !</h2>
       <p class="card-desc" style="margin-bottom:18px;">Vous avez gagné :</p>
 
       <div style="position:relative;max-width:260px;margin:0 auto 22px;background:linear-gradient(135deg,#FFD874,var(--gold));border-radius:16px;border:2px dashed rgba(11,61,145,.35);padding:22px 16px;overflow:visible;">
@@ -663,7 +670,7 @@
       }
       var wonLabel = document.getElementById('won-prize-label');
       if(wonLabel) wonLabel.textContent = currentCadeauNom;
-      setTimeout(function(){ switchPopup('popup-wheel', 'popup-won'); }, 400);
+      setTimeout(function(){ switchPopup('popup-wheel', 'popup-ad'); }, 400);
       return;
     }
 
@@ -951,6 +958,9 @@
     });
 
     document.getElementById('spin-btn').addEventListener('click', spinWheel);
+    document.getElementById('ad-continue-btn').addEventListener('click', function(){
+      switchPopup('popup-ad', 'popup-won');
+    });
     document.getElementById('won-next-btn').addEventListener('click', function(){
       switchPopup('popup-won', 'popup-winner-form');
     });
