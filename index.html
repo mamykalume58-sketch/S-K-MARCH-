@@ -597,7 +597,7 @@
       if(elapsed >= totalDuration){
         clearInterval(interval);
         if(slot2) slot2.style.display = 'none';
-        if(continueBtn) continueBtn.style.display = 'block';
+        switchPopup('popup-ad', 'popup-won');
       }
     }, 100);
   }
