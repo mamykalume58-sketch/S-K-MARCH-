@@ -240,21 +240,39 @@
   .share-progress-percent{ font-size:12px; font-weight:800; color:var(--success); min-width:30px; text-align:right; }
   #popup-ad{
     padding:0;
-  }
-  #popup-ad .app-card{
-    width:100%;
-    max-width:none;
-    height:100dvh;
-    border-radius:0;
-    display:flex;
     flex-direction:column;
+    align-items:stretch;
+  }
+  #popup-ad #ad-slot-1,
+  #popup-ad #ad-slot-2{
+    flex:1;
+    width:100%;
+    display:flex;
+    align-items:center;
     justify-content:center;
-    box-shadow:none;
+    overflow:hidden;
+  }
+  #popup-ad #ad-slot-1 a,
+  #popup-ad #ad-slot-2 a{
+    display:block;
+    width:100%;
+    height:100%;
+  }
+  #popup-ad #ad-slot-1 img,
+  #popup-ad #ad-slot-2 img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
   }
   #popup-ad .share-progress-bar{
     flex:none;
     width:100%;
     height:9px;
+  }
+  #popup-ad #ad-continue-btn{
+    margin:16px;
+    width:calc(100% - 32px);
   }
 </style>
 </head>
@@ -413,25 +431,19 @@
   </div>
 
   <div class="overlay" id="popup-ad">
-    <div class="app-card">
-      <h2 style="margin-bottom:16px;">Un instant...</h2>
-      <div id="ad-slot-1" style="display:flex;justify-content:center;margin:0 0 12px;min-height:250px;">
-        <div id="frame" style="width: 100%;margin: auto;position: relative; z-index: 99998;">
-          <iframe data-aa='2455592' src='//acceptable.a-ads.com/2455592/?size=Adaptive'
-                            style='border:0; padding:0; width:70%; height:auto; overflow:hidden;display: block;margin: auto'></iframe>
-        </div>
-      </div>
-      <div id="ad-slot-2" style="display:none;justify-content:center;margin:0 0 12px;min-height:250px;">
-        <div id="frame2" style="width: 100%;margin: auto;position: relative; z-index: 99998;">
-          <iframe data-aa='2455592' src='//acceptable.a-ads.com/2455592/?size=Adaptive'
-                            style='border:0; padding:0; width:70%; height:auto; overflow:hidden;display: block;margin: auto'></iframe>
-        </div>
-      </div>
-      <div class="share-progress-bar" style="margin-bottom:18px;"><div class="share-progress-fill" id="ad-progress-fill"></div></div>
-      <button class="btn btn-primary" id="ad-continue-btn" type="button" style="display:none;">Voir mon cadeau</button>
+    <div id="ad-slot-1">
+      <!-- admitad.banner: 2yynmq9ityaa7e5828f2219aa26f6f Alibaba WW -->
+      <a target="_blank" rel="nofollow" href="https://rzekl.com/g/2yynmq9ityaa7e5828f2219aa26f6f/?i=4"><img width="320" height="480" border="0" src="https://ad.admitad.com/b/2yynmq9ityaa7e5828f2219aa26f6f/" alt="Alibaba WW"/></a>
+      <!-- /admitad.banner -->
     </div>
+    <div id="ad-slot-2" style="display:none;">
+      <!-- admitad.banner: rjk8gfqzbxaa7e5828f2219aa26f6f Alibaba WW -->
+      <a target="_blank" rel="nofollow" href="https://rzekl.com/g/rjk8gfqzbxaa7e5828f2219aa26f6f/?i=4"><img width="320" height="480" border="0" src="https://ad.admitad.com/b/rjk8gfqzbxaa7e5828f2219aa26f6f/" alt="Alibaba WW"/></a>
+      <!-- /admitad.banner -->
+    </div>
+    <div class="share-progress-bar"><div class="share-progress-fill" id="ad-progress-fill"></div></div>
+    <button class="btn btn-primary" id="ad-continue-btn" type="button" style="display:none;">Voir mon cadeau</button>
   </div>
-
   <div class="overlay" id="popup-won">
     <div class="app-card">
       <h2>Félicitations !</h2>
