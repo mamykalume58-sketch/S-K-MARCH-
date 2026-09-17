@@ -396,19 +396,10 @@
   <div class="overlay" id="popup-ad">
     <div class="app-card">
       <h2 style="margin-bottom:16px;">Un instant...</h2>
-      <div style="display:flex;justify-content:center;margin:0 0 18px;">
-        <script>
-          atOptions = {
-            'key' : 'db7e76395543d38a5a0ac88434c12efb',
-            'format' : 'iframe',
-            'height' : 250,
-            'width' : 300,
-            'params' : {}
-          };
-        </script>
-        <script src="https://www.highrevenueformat.com/db7e76395543d38a5a0ac88434c12efb/invoke.js"></script>
-      </div>
-      <button class="btn btn-primary" id="ad-continue-btn" type="button">Voir mon cadeau</button>
+      <div id="ad-slot-1" style="display:flex;justify-content:center;margin:0 0 12px;min-height:250px;"></div>
+      <div id="ad-slot-2" style="display:none;justify-content:center;margin:0 0 12px;min-height:250px;"></div>
+      <div class="share-progress-bar" style="margin-bottom:18px;"><div class="share-progress-fill" id="ad-progress-fill"></div></div>
+      <button class="btn btn-primary" id="ad-continue-btn" type="button" style="display:none;">Voir mon cadeau</button>
     </div>
   </div>
 
@@ -534,6 +525,65 @@
 
   function hidePopup(id){ document.getElementById(id).classList.remove('show'); }
   function showPopup(id){ document.getElementById(id).classList.add('show'); }
+  var adSequenceStarted = false;
+
+  function loadAdInIframe(container, key, width, height){
+    container.innerHTML = '';
+    var iframe = document.createElement('iframe');
+    iframe.style.border = 'none';
+    iframe.style.width = width + 'px';
+    iframe.style.height = height + 'px';
+    iframe.scrolling = 'no';
+    container.appendChild(iframe);
+    var doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write(
+      '<html><body style="margin:0;padding:0;">' +
+      '<script>atOptions = {"key":"' + key + '","format":"iframe","height":' + height + ',"width":' + width + ',"params":{}};<' + '/script>' +
+      '<script src="https://www.highrevenueformat.com/' + key + '/invoke.js"><' + '/script>' +
+      '</body></html>'
+    );
+    doc.close();
+  }
+
+  function runAdSequence(){
+    if(adSequenceStarted) return;
+    adSequenceStarted = true;
+
+    var slot1 = document.getElementById('ad-slot-1');
+    var slot2 = document.getElementById('ad-slot-2');
+    var fill = document.getElementById('ad-progress-fill');
+    var continueBtn = document.getElementById('ad-continue-btn');
+    var AD_KEY = 'db7e76395543d38a5a0ac88434c12efb';
+
+    loadAdInIframe(slot1, AD_KEY, 300, 250);
+
+    var phase1Duration = 10000;
+    var phase2Duration = 6000;
+    var totalDuration = phase1Duration + phase2Duration;
+    var start = Date.now();
+    var switched = false;
+
+    var interval = setInterval(function(){
+      var elapsed = Date.now() - start;
+      var pct = Math.min(100, (elapsed / totalDuration) * 100);
+      if(fill) fill.style.width = pct + '%';
+
+      if(!switched && elapsed >= phase1Duration){
+        switched = true;
+        slot1.style.display = 'none';
+        slot2.style.display = 'flex';
+        loadAdInIframe(slot2, AD_KEY, 300, 250);
+      }
+
+      if(elapsed >= totalDuration){
+        clearInterval(interval);
+        slot2.style.display = 'none';
+        if(continueBtn) continueBtn.style.display = 'block';
+      }
+    }, 100);
+  }
+
   function switchPopup(fromId, toId){ hidePopup(fromId); showPopup(toId); }
 
   function wireQuestion(currentId, nextId, key, isLast){
@@ -670,7 +720,7 @@
       }
       var wonLabel = document.getElementById('won-prize-label');
       if(wonLabel) wonLabel.textContent = currentCadeauNom;
-      setTimeout(function(){ switchPopup('popup-wheel', 'popup-ad'); }, 400);
+      setTimeout(function(){ switchPopup('popup-wheel', 'popup-ad'); runAdSequence(); }, 400);
       return;
     }
 
