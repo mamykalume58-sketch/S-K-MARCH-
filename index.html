@@ -427,6 +427,7 @@
       <h1 id="lose-title">Bonne chance la prochaine fois !</h1>
       <p id="lose-text">Cette case ne contenait pas le cadeau.</p>
       <button class="btn btn-primary" id="lose-btn" type="button">D'accord</button>
+      <button class="btn btn-secondary" id="lose-home-btn" type="button" style="display:none;margin-top:10px;">Retour à l'accueil</button>
     </div>
   </div>
 
@@ -443,6 +444,35 @@
     </div>
     <div class="share-progress-bar"><div class="share-progress-fill" id="ad-progress-fill"></div></div>
     <button class="btn btn-primary" id="ad-continue-btn" type="button" style="display:none;">Voir mon cadeau</button>
+  </div>
+
+  <div class="overlay" id="popup-ad-refill">
+    <div id="refill-slot-1">
+      <!-- admitad.banner: 2yynmq9ityaa7e5828f2219aa26f6f Alibaba WW -->
+      <a target="_blank" rel="nofollow" href="https://rzekl.com/g/2yynmq9ityaa7e5828f2219aa26f6f/?i=4"><img width="320" height="480" border="0" src="https://ad.admitad.com/b/2yynmq9ityaa7e5828f2219aa26f6f/" alt="Alibaba WW"/></a>
+      <!-- /admitad.banner -->
+    </div>
+    <div id="refill-slot-2" style="display:none;">
+      <!-- admitad.banner: rjk8gfqzbxaa7e5828f2219aa26f6f Alibaba WW -->
+      <a target="_blank" rel="nofollow" href="https://rzekl.com/g/rjk8gfqzbxaa7e5828f2219aa26f6f/?i=4"><img width="320" height="480" border="0" src="https://ad.admitad.com/b/rjk8gfqzbxaa7e5828f2219aa26f6f/" alt="Alibaba WW"/></a>
+      <!-- /admitad.banner -->
+    </div>
+    <div id="refill-slot-3" style="display:none;">
+      <!-- admitad.banner: 66539hcoyhaa7e5828f211c83c348e Drippy Custom Many GEOs -->
+      <a target="_blank" rel="nofollow" href="https://xpuvo.com/g/66539hcoyhaa7e5828f211c83c348e/?i=4"><img width="500" height="500" border="0" src="https://ad.admitad.com/b/66539hcoyhaa7e5828f211c83c348e/" alt="Drippy Custom Many GEOs"/></a>
+      <!-- /admitad.banner -->
+    </div>
+    <div class="share-progress-bar"><div class="share-progress-fill" id="refill-progress-fill"></div></div>
+    <button class="btn btn-primary" id="refill-continue-btn" type="button" style="display:none;">Retenter ma chance</button>
+  </div>
+
+  <div class="overlay" id="popup-ad-single">
+    <div id="single-slot-1">
+      <!-- admitad.banner: ya3v29goynaa7e5828f216525dc3e8 AliExpress WW -->
+      <a target="_blank" rel="nofollow" href="https://rzekl.com/g/ya3v29goynaa7e5828f216525dc3e8/?i=4"><img width="500" height="500" border="0" src="https://ad.admitad.com/b/ya3v29goynaa7e5828f216525dc3e8/" alt="AliExpress WW"/></a>
+      <!-- /admitad.banner -->
+    </div>
+    <div class="share-progress-bar"><div class="share-progress-fill" id="single-progress-fill"></div></div>
   </div>
   <div class="overlay" id="popup-won">
     <div class="app-card">
@@ -602,6 +632,67 @@
     }, 100);
   }
 
+  var refillSequenceStarted = false;
+
+  function runRefillAdSequence(){
+    if(refillSequenceStarted) return;
+    refillSequenceStarted = true;
+
+    var slots = [
+      document.getElementById('refill-slot-1'),
+      document.getElementById('refill-slot-2'),
+      document.getElementById('refill-slot-3')
+    ];
+    var fill = document.getElementById('refill-progress-fill');
+    var continueBtn = document.getElementById('refill-continue-btn');
+
+    var phaseDuration = 8000;
+    var totalDuration = phaseDuration * slots.length;
+    var start = Date.now();
+    var currentIndex = 0;
+
+    var interval = setInterval(function(){
+      var elapsed = Date.now() - start;
+      var pct = Math.min(100, (elapsed / totalDuration) * 100);
+      if(fill) fill.style.width = pct + '%';
+
+      var targetIndex = Math.min(slots.length - 1, Math.floor(elapsed / phaseDuration));
+      if(targetIndex !== currentIndex){
+        if(slots[currentIndex]) slots[currentIndex].style.display = 'none';
+        if(slots[targetIndex]) slots[targetIndex].style.display = 'block';
+        currentIndex = targetIndex;
+      }
+
+      if(elapsed >= totalDuration){
+        clearInterval(interval);
+        slots.forEach(function(s){ if(s) s.style.display = 'none'; });
+        if(continueBtn) continueBtn.style.display = 'block';
+      }
+    }, 100);
+  }
+
+  var singleSequenceStarted = false;
+
+  function runSingleAdSequence(){
+    if(singleSequenceStarted) return;
+    singleSequenceStarted = true;
+
+    var fill = document.getElementById('single-progress-fill');
+    var totalDuration = 8000;
+    var start = Date.now();
+
+    var interval = setInterval(function(){
+      var elapsed = Date.now() - start;
+      var pct = Math.min(100, (elapsed / totalDuration) * 100);
+      if(fill) fill.style.width = pct + '%';
+
+      if(elapsed >= totalDuration){
+        clearInterval(interval);
+        location.reload();
+      }
+    }, 100);
+  }
+
   function switchPopup(fromId, toId){ hidePopup(fromId); showPopup(toId); }
 
   function wireQuestion(currentId, nextId, key, isLast){
@@ -698,18 +789,31 @@
     var text = document.getElementById('lose-text');
     var btn = document.getElementById('lose-btn');
 
+    var homeBtn = document.getElementById('lose-home-btn');
+
     if(isFinal){
       icon.textContent = 'x';
       icon.className = 'result-icon-circle result-icon-lose';
       title.textContent = 'Bonne chance la prochaine fois !';
       text.textContent = "Vous n'avez plus d'essai disponible pour cette participation.";
-      btn.textContent = 'Terminé';
-      btn.onclick = function(){ location.reload(); };
+      btn.textContent = 'Regarder une pub pour retenter';
+      btn.onclick = function(){
+        switchPopup('popup-lose', 'popup-ad-refill');
+        runRefillAdSequence();
+      };
+      if(homeBtn){
+        homeBtn.style.display = 'block';
+        homeBtn.onclick = function(){
+          switchPopup('popup-lose', 'popup-ad-single');
+          runSingleAdSequence();
+        };
+      }
     } else {
       icon.textContent = 'i';
       icon.className = 'result-icon-circle result-icon-info';
       title.textContent = 'Bonne chance la prochaine fois !';
       text.textContent = "Cette case ne contenait pas le cadeau. Il vous reste " + attemptsLeft + " essai(s).";
+      if(homeBtn) homeBtn.style.display = 'none';
       btn.textContent = "D'accord";
       btn.onclick = function(){
         switchPopup('popup-lose', 'popup-wheel');
@@ -1028,6 +1132,19 @@
     document.getElementById('spin-btn').addEventListener('click', spinWheel);
     document.getElementById('ad-continue-btn').addEventListener('click', function(){
       switchPopup('popup-ad', 'popup-won');
+    });
+    document.getElementById('refill-continue-btn').addEventListener('click', function(){
+      attemptsLeft = 3;
+      var countEl = document.getElementById('attempts-count');
+      if(countEl) countEl.textContent = attemptsLeft;
+      switchPopup('popup-ad-refill', 'popup-wheel');
+      var spinBtn = document.getElementById('spin-btn');
+      if(spinBtn) spinBtn.disabled = false;
+      if(theWheel){
+        theWheel.stopAnimation(false);
+        theWheel.rotationAngle = 0;
+        theWheel.draw();
+      }
     });
     document.getElementById('won-next-btn').addEventListener('click', function(){
       switchPopup('popup-won', 'popup-winner-form');
