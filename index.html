@@ -946,166 +946,83 @@
       alert('Le generateur de PDF n a pas pu se charger. Verifiez votre connexion internet.');
       return;
     }
-    var doc = new jsPDFLib({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+    var doc = new jsPDFLib({ orientation: 'portrait', unit: 'mm', format: [100, 190] });
     var pageW = doc.internal.pageSize.getWidth();
     var pageH = doc.internal.pageSize.getHeight();
-    var margin = 12;
+    var GOLD_LIGHT = [255, 216, 116];
+    var GOLD = [244, 185, 66];
     var NAVY = [11, 61, 145];
-    var GOLD = [255, 193, 7];
-    var LIGHT_BLUE = [227, 238, 253];
-    var GRAY_TEXT = [107, 114, 128];
-    var DARK_TEXT = [17, 24, 39];
-    var PALE_GRAY = [232, 236, 244];
+    var NAVY_TEXT = [18, 62, 112];
+    var WHITE = [255, 255, 255];
     var participationId = data.participationId || '-';
-    var headerH = 34;
-    var splitX = pageW * 0.40;
-    var slant = 10;
+    var margin = 6;
 
-    doc.setFillColor(255, 255, 255);
-    doc.rect(0, 0, pageW, headerH, 'F');
-    doc.setFillColor(NAVY[0], NAVY[1], NAVY[2]);
-    doc.lines([[pageW - (splitX + slant), 0], [0, headerH], [(splitX - slant) - pageW, 0]], splitX + slant, 0, [1, 1], 'F', true);
     doc.setFillColor(GOLD[0], GOLD[1], GOLD[2]);
-    doc.lines([[3, 0], [-2 * slant, headerH], [-3, 0]], splitX + slant - 3, 0, [1, 1], 'F', true);
-    doc.setFillColor(GOLD[0], GOLD[1], GOLD[2]);
-    doc.rect(0, headerH, pageW, 1.4, 'F');
+    doc.rect(0, 0, pageW, pageH, 'F');
+
+    doc.setDrawColor(NAVY[0], NAVY[1], NAVY[2]);
+    doc.setLineWidth(0.6);
+    doc.setLineDashPattern([2, 1.5], 0);
+    doc.roundedRect(margin, margin, pageW - margin * 2, pageH - margin * 2, 4, 4, 'D');
+    doc.setLineDashPattern([], 0);
+
+    doc.setFillColor(WHITE[0], WHITE[1], WHITE[2]);
+    doc.circle(0, pageH / 2, 5, 'F');
+    doc.circle(pageW, pageH / 2, 5, 'F');
+
+    var cy = 14;
 
     try{
       var logo = await loadLogoCropped('assets/logo.png');
-      var maxLogoW = (splitX - slant) - margin - 4;
-      var maxLogoH = headerH - 10;
-      var ratio = Math.min(maxLogoW / logo.width, maxLogoH / logo.height);
-      doc.addImage(logo.dataUrl, 'PNG', margin, (headerH - logo.height * ratio) / 2, logo.width * ratio, logo.height * ratio);
-    }catch(err){ console.error('Reçu PDF : logo introuvable.', err); }
+      var logoW = 22;
+      var logoH = (logo.height / logo.width) * logoW;
+      doc.addImage(logo.dataUrl, 'PNG', (pageW - logoW) / 2, cy, logoW, logoH);
+      cy += logoH + 4;
+    }catch(err){ console.error('Reçu PDF : logo introuvable.', err); cy += 2; }
 
-    doc.setFont(undefined, 'normal'); doc.setFontSize(9); doc.setTextColor(255,255,255);
-    doc.text('Email : sk.supermarche.cd@gmail.com', pageW - margin, 11, { align: 'right' });
-    doc.text('Tel : +243 998 765 432', pageW - margin, 16.5, { align: 'right' });
-    doc.text('Lubumbashi, RDC', pageW - margin, 22, { align: 'right' });
+    doc.setFont(undefined, 'normal'); doc.setFontSize(7); doc.setTextColor(NAVY_TEXT[0], NAVY_TEXT[1], NAVY_TEXT[2]);
+    doc.text('JEU-CONCOURS 17E ANNIVERSAIRE', pageW / 2, cy, { align: 'center' });
+    cy += 8;
 
-    var titleY = 45;
-    doc.setFont(undefined, 'bold'); doc.setFontSize(30); doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
-    doc.text('REÇU', margin, titleY);
-    doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]);
-    doc.rect(margin, titleY + 2.2, 28, 1.4, 'F');
-    doc.setFont(undefined, 'normal'); doc.setFontSize(11); doc.setTextColor(GRAY_TEXT[0],GRAY_TEXT[1],GRAY_TEXT[2]);
-    doc.text('Jeu concours 17e anniversaire', margin, titleY + 10);
+    doc.setFont(undefined, 'bold'); doc.setFontSize(8); doc.setTextColor(NAVY_TEXT[0], NAVY_TEXT[1], NAVY_TEXT[2]);
+    doc.text('COUPON CADEAU', pageW / 2, cy, { align: 'center', charSpace: 0.5 });
+    cy += 8;
 
-    doc.setFontSize(9); doc.setTextColor(GRAY_TEXT[0],GRAY_TEXT[1],GRAY_TEXT[2]);
-    doc.text('N° REÇU', pageW - margin, titleY - 6, { align: 'right' });
-    doc.setFont(undefined, 'bold'); doc.setFontSize(13);
-    var idW = doc.getTextWidth(String(participationId)) + 8;
-    doc.setFillColor(LIGHT_BLUE[0],LIGHT_BLUE[1],LIGHT_BLUE[2]);
-    doc.roundedRect(pageW - margin - idW, titleY - 4.5, idW, 8, 1.5, 1.5, 'F');
-    doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
-    doc.text(String(participationId), pageW - margin - idW / 2, titleY + 1, { align: 'center' });
+    doc.setFont(undefined, 'bold'); doc.setFontSize(15); doc.setTextColor(NAVY[0], NAVY[1], NAVY[2]);
+    var prizeLines = doc.splitTextToSize(String(data.cadeau || '-'), pageW - margin * 2 - 12);
+    doc.text(prizeLines, pageW / 2, cy, { align: 'center' });
+    cy += prizeLines.length * 6 + 6;
 
-    var footerH = 24;
-    var contentTop = 62;
-    var contentBottom = pageH - footerH - 8;
-    var leftW = pageW * 0.60 - margin;
-    var leftX = margin;
-    var rightX = leftX + leftW + 8;
-    var rightW = pageW - rightX - margin;
+    doc.setDrawColor(NAVY_TEXT[0], NAVY_TEXT[1], NAVY_TEXT[2]);
+    doc.setLineWidth(0.4);
+    doc.setLineDashPattern([1.5, 1.2], 0);
+    doc.line(margin + 6, cy, pageW - margin - 6, cy);
+    doc.setLineDashPattern([], 0);
+    cy += 8;
 
-    doc.setDrawColor(190,210,245); doc.setLineWidth(0.5); doc.setFillColor(255,255,255);
-    doc.roundedRect(leftX, contentTop, leftW, contentBottom - contentTop, 3, 3, 'FD');
+    doc.setFillColor(255, 255, 255);
+    var boxH = 34;
+    doc.roundedRect(margin + 4, cy, pageW - (margin + 4) * 2, boxH, 3, 3, 'F');
 
-    var innerX = leftX + 8;
-    var innerW = leftW - 16;
-    var barH = 10;
-    doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);
-    doc.rect(leftX + 0.6, contentTop + 0.6, leftW - 1.2, barH, 'F');
-    doc.setDrawColor(255,255,255); doc.setLineWidth(0.3);
-    doc.rect(innerX, contentTop + 2.6, 4.6, 3.6, 'S');
-    doc.line(innerX, contentTop + 4.4, innerX + 4.6, contentTop + 4.4);
-    doc.line(innerX + 2.3, contentTop + 2.6, innerX + 2.3, contentTop + 1.4);
-    doc.setFont(undefined, 'bold'); doc.setFontSize(12); doc.setTextColor(255,255,255);
-    doc.text('DÉTAILS DU GAIN', innerX + 8, contentTop + 7);
-
-    var cy = contentTop + barH + 8;
     var fields = [
-      ['Cadeau gagné', data.cadeau || '-'],
-      ['Nom complet', data.fullName || '-'],
+      ['Gagnant', data.fullName || '-'],
       ['Téléphone', data.phone || '-'],
-      ['Adresse', data.address || '-'],
       ['Ville', data.city || '-'],
-      ['E-mail', data.email || '-']
+      ['N° participation', participationId]
     ];
-    var rowH = 9;
+    var rowY = cy + 7;
     fields.forEach(function(field){
-      doc.setFont(undefined, 'normal'); doc.setFontSize(8); doc.setTextColor(GRAY_TEXT[0],GRAY_TEXT[1],GRAY_TEXT[2]);
-      doc.text(field[0].toUpperCase(), innerX, cy);
-      var valueLines = doc.splitTextToSize(String(field[1]), innerW - 2);
-      doc.setFont(undefined, 'bold'); doc.setFontSize(9.5); doc.setTextColor(DARK_TEXT[0],DARK_TEXT[1],DARK_TEXT[2]);
-      doc.text(valueLines, innerX, cy + 4);
-      doc.setDrawColor(230,230,230); doc.setLineWidth(0.3);
-      doc.line(innerX, cy + rowH - 2, innerX + innerW, cy + rowH - 2);
-      cy += rowH;
+      doc.setFont(undefined, 'normal'); doc.setFontSize(7); doc.setTextColor(120, 100, 40);
+      doc.text(field[0], margin + 8, rowY);
+      doc.setFont(undefined, 'bold'); doc.setFontSize(8); doc.setTextColor(NAVY_TEXT[0], NAVY_TEXT[1], NAVY_TEXT[2]);
+      doc.text(String(field[1]), pageW - margin - 8, rowY, { align: 'right' });
+      rowY += 7;
     });
+    cy += boxH + 8;
 
-    cy += 2;
-    doc.setFillColor(LIGHT_BLUE[0],LIGHT_BLUE[1],LIGHT_BLUE[2]);
-    doc.roundedRect(innerX, cy, innerW, 9, 2, 2, 'F');
-    doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);
-    doc.circle(innerX + 4, cy + 4.5, 1.5, 'F');
-    doc.setFont(undefined, 'bold'); doc.setFontSize(9.5); doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
-    doc.text('Numéro de participation : ' + participationId, innerX + 8, cy + 5.8);
-    cy += 9 + 3;
-
-    var msg = "Veuillez passer dans l'un de nos supermarchés S&K Katanga pour réclamer votre ticket gagnant.";
-    var msgLines = doc.splitTextToSize(msg, innerW - 8);
-    var msgH = (msgLines.length * 4.2) + 7;
-    doc.setFillColor(LIGHT_BLUE[0],LIGHT_BLUE[1],LIGHT_BLUE[2]);
-    doc.setDrawColor(NAVY[0],NAVY[1],NAVY[2]); doc.setLineWidth(0.4);
-    doc.roundedRect(innerX, cy, innerW, msgH, 2, 2, 'FD');
-    doc.setFont(undefined, 'bold'); doc.setFontSize(9); doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
-    doc.text(msgLines, innerX + 4, cy + 5);
-    cy += msgH + 3;
-
-    doc.setFont(undefined, 'italic'); doc.setFontSize(7.5); doc.setTextColor(GRAY_TEXT[0],GRAY_TEXT[1],GRAY_TEXT[2]);
-    var subLines = doc.splitTextToSize('Nos supermarchés sont situés à Lubumbashi et dans toute la province du Haut-Katanga.', innerW);
-    doc.text(subLines, innerX, cy);
-
-    doc.setDrawColor(220,220,220); doc.setLineWidth(0.4);
-    doc.roundedRect(rightX, contentTop, rightW, contentBottom - contentTop, 3, 3, 'D');
-    var wmCX = rightX + rightW / 2;
-    var wmCY = contentTop + (contentBottom - contentTop) * 0.36;
-    drawCartIcon(doc, wmCX, wmCY, 26, PALE_GRAY);
-    doc.setFont(undefined, 'italic'); doc.setFontSize(12); doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
-    doc.text('Votre gain vous attend !', rightX + rightW / 2, contentTop + 16, { align: 'center' });
-
-    var stampCY = contentTop + (contentBottom - contentTop) * 0.62;
-    doc.setDrawColor(GOLD[0],GOLD[1],GOLD[2]); doc.setLineWidth(0.6);
-    doc.circle(rightX + rightW / 2, stampCY, 14, 'D');
-    doc.setDrawColor(NAVY[0],NAVY[1],NAVY[2]); doc.setLineWidth(0.35);
-    doc.circle(rightX + rightW / 2, stampCY, 12, 'D');
-    drawCartIcon(doc, rightX + rightW / 2, stampCY - 4, 9, NAVY);
-    doc.setFont(undefined, 'bold'); doc.setFontSize(9); doc.setTextColor(NAVY[0],NAVY[1],NAVY[2]);
-    doc.text('S&K', rightX + rightW / 2, stampCY + 3, { align: 'center' });
-    doc.setFont(undefined, 'normal'); doc.setFontSize(5.5);
-    doc.text('SUPERMARCHÉ KATANGA', rightX + rightW / 2, stampCY + 7, { align: 'center' });
-
-    var sigY = contentBottom - 14;
-    doc.setDrawColor(150,150,150); doc.setLineWidth(0.3);
-    doc.line(rightX + 10, sigY, rightX + rightW - 10, sigY);
-    doc.setFont(undefined, 'normal'); doc.setFontSize(9); doc.setTextColor(DARK_TEXT[0],DARK_TEXT[1],DARK_TEXT[2]);
-    doc.text('La Direction', rightX + rightW / 2, sigY + 5, { align: 'center' });
-
-    doc.setFont(undefined, 'italic'); doc.setFontSize(8.5); doc.setTextColor(GRAY_TEXT[0],GRAY_TEXT[1],GRAY_TEXT[2]);
-    doc.text('Merci de votre fidélité ! Joyeux 17e anniversaire S&K.', pageW / 2, pageH - footerH - 3, { align: 'center' });
-
-    var footerY = pageH - footerH;
-    doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]); doc.rect(0, footerY, pageW, footerH, 'F');
-    doc.setFillColor(GOLD[0],GOLD[1],GOLD[2]); doc.rect(0, footerY, pageW, 1.4, 'F');
-    drawCartIcon(doc, margin + 4, footerY + 11, 9, [255,255,255]);
-    doc.setFont(undefined, 'bold'); doc.setFontSize(11); doc.setTextColor(255,255,255);
-    doc.text('S&K Supermarché Katanga', margin + 12, footerY + 12);
-    doc.setFont(undefined, 'normal'); doc.setFontSize(8.5);
-    doc.text('Votre satisfaction, notre priorité !', margin + 12, footerY + 18);
-    drawStarIcon(doc, pageW - margin - 48, footerY + 12.5, 2.4, GOLD);
-    doc.setFontSize(9);
-    doc.text('Merci de faire confiance à S&K !', pageW - margin, footerY + 15, { align: 'right' });
+    doc.setFont(undefined, 'normal'); doc.setFontSize(7); doc.setTextColor(NAVY_TEXT[0], NAVY_TEXT[1], NAVY_TEXT[2]);
+    var msgLines = doc.splitTextToSize("Présentez ce coupon dans l'un de nos supermarchés S&K Katanga pour réclamer votre cadeau.", pageW - margin * 2 - 12);
+    doc.text(msgLines, pageW / 2, cy, { align: 'center' });
 
     doc.save('recu-gain-sk-' + participationId + '.pdf');
   }
